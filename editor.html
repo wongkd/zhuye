@@ -18,14 +18,13 @@
       <div>
         <div class="text-sm font-extrabold tracking-widest text-[#b88745] uppercase">Portfolio CMS</div>
         <h1 class="text-4xl md:text-5xl font-extrabold mt-2">个人站内容编辑器</h1>
-        <p class="hint mt-3 max-w-3xl">像填表一样修改网页文字。改完后点击「导出 content.js」，把下载的文件替换当前文件夹里的 <b>content.js</b>，刷新网站即可生效。</p>
+        <p class="hint mt-3 max-w-3xl">像填表一样修改网页文字。改完后点击「同步到 GitHub」即可自动部署到 <b>zhuye.huangqidong.cn</b>。</p>
       </div>
       <div class="flex flex-wrap gap-3">
         <a href="index.html" target="_blank" class="btn btn-soft">预览网站</a>
-        <button onclick="saveToLocalFile()" class="btn btn-primary">保存到本地文件</button>
-        <button onclick="saveToCloud()" class="btn btn-gold">同步到 GitHub</button>
+        <button onclick="saveToCloud()" class="btn btn-primary" style="background:#b88745">同步到 GitHub ✨</button>
+        <button onclick="saveToLocalFile()" class="btn btn-soft" id="localSaveBtn" style="display:none">保存到本地文件</button>
         <button onclick="loadSample()" class="btn btn-soft">恢复默认</button>
-        <button onclick="copyJS()" class="btn btn-gold">复制 content.js</button>
         <button onclick="downloadJS()" class="btn btn-soft">导出 content.js</button>
       </div>
     </header>
@@ -36,12 +35,16 @@
         <div class="mt-5 p-4 rounded-2xl bg-[#fff8ed] border border-[#ecdcc1]">
           <div class="font-extrabold mb-2">使用方法</div>
           <ol class="hint list-decimal ml-4 space-y-1">
-            <li>双击 start-editor.bat 启动</li>
-            <li>打开 http://127.0.0.1:5177/editor.html</li>
-            <li>左侧切换模块，右侧填文字</li>
-            <li>点击「保存到本地文件」</li>
-            <li>刷新 index.html 看效果</li>
+            <li>改完内容点「同步到 GitHub」</li>
+            <li>第一次使用输入密码：<b>hqd125125</b></li>
+            <li>等待 1-2 分钟自动部署</li>
+            <li>刷新首页看效果</li>
           </ol>
+          <div class="mt-3 text-xs text-[#b88745] font-bold">📢 内容会自动推送到 GitHub 并部署上线</div>
+        </div>
+        <div class="mt-3 p-3 rounded-2xl bg-[#f3f6fc] border border-[#c8daf5]">
+          <div class="font-extrabold text-sm mb-1">🔑 已预填 Worker 地址</div>
+          <div class="text-xs hint break-all">https://zhuye-portfolio-cms.563838884.workers.dev/api/save-content</div>
         </div>
       </aside>
 
@@ -105,24 +108,32 @@
         if(!result.ok) throw new Error(result.error || '保存失败');
         toast('已保存到 content.js，并自动备份旧文件');
       }catch(error){
-        alert('自动保存失败：请确认你是通过 start-editor.bat 启动，并用 http://127.0.0.1:5177/editor.html 打开的。\n\n错误：' + error.message);
+        if(window.location.host !== 'localhost' && window.location.host !== '127.0.0.1:5177'){
+          saveToCloud();
+        }else{
+          alert('自动保存失败：请确认你是通过 start-editor.bat 启动，并用 http://127.0.0.1:5177/editor.html 打开的。\n\n错误：' + error.message);
+        }
       }
     }
     async function saveToCloud(){
-      const endpoint = localStorage.getItem('portfolio-cms-endpoint') || prompt('请输入 Cloudflare Worker 保存接口地址，例如：https://zhuye-portfolio-cms.xxx.workers.dev/api/save-content');
-      if(!endpoint) return;
+      const WORKER_URL = 'https://zhuye-portfolio-cms.563838884.workers.dev/api/save-content';
+      const endpoint = localStorage.getItem('portfolio-cms-endpoint') || WORKER_URL;
       localStorage.setItem('portfolio-cms-endpoint', endpoint);
-      const password = sessionStorage.getItem('portfolio-cms-password') || prompt('请输入 CMS 保存密码');
+      const password = sessionStorage.getItem('portfolio-cms-password') || prompt('请输入 CMS 保存密码（默认：hqd125125）');
       if(!password) return;
       sessionStorage.setItem('portfolio-cms-password', password);
+      const btn = event?.target || document.querySelector('button[onclick*="saveToCloud"]');
+      if(btn){ btn.disabled=true; btn.textContent='⏳ 同步中...'; }
       try{
         const res = await fetch(endpoint, {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+password}, body:JSON.stringify({content:getCleanData(), message:'Update zhuye content from visual editor'})});
         const result = await res.json();
         if(!result.ok) throw new Error(result.error || JSON.stringify(result.detail || result));
-        toast('已同步到 GitHub，等待自动部署');
+        toast('✅ 已同步到 GitHub，等待自动部署中...');
         if(result.commit) console.log('GitHub commit:', result.commit);
       }catch(error){
-        alert('同步 GitHub 失败：' + error.message);
+        alert('同步失败：' + error.message + '\n\n提示：密码是 hqd125125，Worker 地址已自动填好');
+      }finally{
+        if(btn){ btn.disabled=false; btn.textContent='同步到 GitHub ✨'; }
       }
     }
     function downloadJS(){ const blob=new Blob([toJS()],{type:'text/javascript;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='content.js'; a.click(); URL.revokeObjectURL(a.href); toast('已导出 content.js'); }
