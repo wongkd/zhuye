@@ -10,14 +10,14 @@ window.SITE_CONTENT = {
   "nav": {
     "about": "关于我们",
     "projects": "服务案例",
-    "skills": "服务能力",
-    "contact": "报价预估"
+    "skills": "计价方式",
+    "contact": "联系我们"
   },
   "hero": {
     "eyebrow": "BLRY Construction / Renovation / Smart Living",
     "titleHighlight": "表里如一",
     "titleMain": "把家装成理想生活",
-    "subtitle": "专注住宅装修、工程落地与智能化生活方式整合，从预算、设计、施工到交付，用透明流程和可靠执行帮你少走弯路。",
+    "subtitle": "专注豪宅装修、智能化生活方式与公共空间，从预算、设计、施工到交付，用透明流程和可靠执行帮你少走弯路。",
     "primaryButton": "查看服务案例",
     "secondaryButton": "获取报价预估",
     "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&h=900&fit=crop",
