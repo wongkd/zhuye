@@ -51,3 +51,26 @@ When editing zhuye 1.6, keep About as the company introduction + process/stats b
 - Tags: zhuye, mobile, pricing, information-architecture
 
 ---
+
+## [LRN-20260613-003] best_practice
+
+**Logged**: 2026-06-13T05:16:59+08:00
+**Priority**: high
+**Status**: pending
+**Area**: frontend
+
+### Summary
+Mobile Apple-style motion should use IntersectionObserver instead of ScrollTrigger for zhuye 1.6.
+
+### Details
+User wants Apple-like motion effects but prior mobile ScrollTrigger caused delayed reflow after scroll. The safer pattern is: mobile uses CSS transitions + IntersectionObserver + one-time reveal; desktop can use GSAP ScrollTrigger for cascade and light parallax. Avoid mobile pin/scrub/ScrollTrigger refresh pressure.
+
+### Suggested Action
+For zhuye mobile animation, keep the mobile branch free of `gsap.fromTo` and `scrollTrigger`; implement `mobile-reveal` classes and `IntersectionObserver`. Keep parallax and richer GSAP effects desktop-only. If users say content needs too many scrolls to appear, do not increase ScrollTrigger-style complexity; instead trigger earlier with a positive top `rootMargin`, shorten stagger caps, and reveal remaining `.mobile-reveal` elements within the same `section` as a group.
+
+### Metadata
+- Source: user_feedback
+- Related Files: assets/site.js, assets/site.css
+- Tags: zhuye, mobile, animation, scrolltrigger, intersectionobserver
+
+---

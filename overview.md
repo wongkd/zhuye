@@ -27,7 +27,36 @@
 - 已检查无旧的 `mobile-pricing-card` / `pricing-step` / `mobile-only-copy` / `desktop-only-copy` 遗留。
 - 已检查手机端样式无 `overflow-x:auto`、`scroll-snap-type:x`、`grid-auto-flow:column`、`grid-auto-columns`。
 
+## 最新微调：移动端内容出现节奏
+
+- 用户确认连续上下滑已稳定，之前约 3 秒重排问题未复发。
+- 本轮只做小幅动效节奏微调：移动端仍坚持 `IntersectionObserver + CSS transition`，不恢复移动端 GSAP ScrollTrigger。
+- 将移动端 reveal 全局级联延迟从 `72ms / 420ms` 收敛为 `46ms / 260ms`。
+- 新增同一 section 内的 `showSectionGroup()`：当板块中任一元素进入触发区，会把该板块剩余内容以更短 `38ms / 190ms` 的节奏集中展示，减少用户需要多次下滑才看完整个板块的问题。
+- IntersectionObserver 触发区改为 `rootMargin: '18% 0px -8% 0px'`、`threshold: .06`，让内容更早、更自然进入视野。
+- 移动端 reveal 位移从 `42px` 收敛到 `30px`，blur 从 `10px` 收敛到 `8px`，duration 从 `820ms` 收敛到 `720ms`，保留苹果官网式柔和过渡但避免信息出现过慢。
+
+## 验证结果
+
+- `assets/site.js` 语法检查通过。
+- `git -C personal-portfolio diff --check` 通过。
+- 已确认移动端仍会 kill ScrollTrigger，移动端 reveal 使用新的更早触发与板块成组显示策略。
+
+## 本轮调整：报价预估两屏式拆分与动画参数
+
+- 按用户最新要求调整移动端 reveal 参数：全局级联 `60ms / 350ms`，板块内集中出现 `40ms / 200ms`。
+- 动画幅度恢复为 `translateY(42px)`、`blur(10px)`，时长保持 `720ms`，继续使用 Apple-like cubic easing。
+- 保持移动端不使用 GSAP ScrollTrigger，仍为 `IntersectionObserver + CSS transition`，避免 3 秒重排问题复发。
+- 将“报价预估”移动端拆成两段视口级内容：红框标题说明作为第一屏，蓝框报价表单作为第二屏。
+- 移动端 `.contact-copy` 设置为 `min-height:100svh` 并垂直居中，`.quote-form` 设置为接近一屏高度；用户从说明页滑动一次即可进入表单页。
+
+## 验证结果
+
+- `assets/site.js` 语法检查通过。
+- `git -C personal-portfolio diff --check` 通过。
+- 已打开本地预览，重点检查手机端“报价预估”说明与表单是否分屏自然。
+
 ## 后续建议
 
-- 打开本地预览重点看 375px / 390px 手机端：About 是否完整、计价卡片是否清晰、是否无横向溢出。
+- 在 375px / 390px 手机端确认：进入“报价预估”时先看到完整说明页，继续滑动一次进入表单填写页。
 - 视觉确认后再提交 Git。
