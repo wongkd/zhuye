@@ -6,14 +6,16 @@
   <meta name="theme-color" content="#f5f5f7">
   <script>
     (()=>{
-      const saved = localStorage.getItem('portfolio-theme') || 'light';
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = saved === 'system' ? (prefersDark ? 'dark' : 'light') : saved;
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.dataset.themeChoice = saved;
+      const mq = window.matchMedia;
+      if(mq) {
+        if(mq('(prefers-color-scheme: dark)').matches) { document.documentElement.dataset.theme = 'dark'; return; }
+        if(mq('(prefers-color-scheme: light)').matches) { document.documentElement.dataset.theme = 'light'; return; }
+      }
+      const hour = new Date().getHours();
+      document.documentElement.dataset.theme = (hour >= 6 && hour < 18) ? 'light' : 'dark';
     })();
   </script>
-  <meta name="app-version" content="1.0">
+  <meta name="app-version" content="1.1">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/logo.png">
   <title>广东表里如一工程有限公司 | BLRY</title>
@@ -103,8 +105,6 @@
     .nav-links a{color:var(--text-secondary);text-decoration:none;font-size:14px;font-weight:700;padding:12px 16px;border-radius:999px;transition:all .2s ease}
     .nav-links a:hover{color:var(--text-primary);background:color-mix(in srgb,var(--accent) 10%,transparent)}
     .nav-actions{display:flex;align-items:center;gap:8px}
-    .theme-toggle{border:1px solid var(--line);background:color-mix(in srgb,var(--surface-raised) 78%,transparent);color:var(--nav-text);border-radius:999px;padding:9px 12px;font-weight:900;font-size:13px;line-height:1;cursor:pointer;min-width:46px;min-height:40px;display:inline-flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.18);transition:transform .2s ease,background .2s ease,border-color .2s ease}
-    .theme-toggle:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--accent) 38%,var(--line))}
     .menu-toggle{display:none;border:1px solid var(--line);background:color-mix(in srgb,var(--surface-raised) 78%,transparent);color:var(--nav-text);border-radius:999px;padding:10px 14px;font-weight:800;cursor:pointer;min-height:40px}
     .mobile-menu{display:none;pointer-events:auto;width:min(100% - 32px,1480px);margin:10px auto 0;padding:10px;border:1px solid var(--line);border-radius:24px;background:var(--nav-bg-active);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 22px 70px rgba(0,0,0,.16)}
     .mobile-menu a{display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:16px;color:var(--text-primary);text-decoration:none;font-weight:800;border-bottom:1px solid var(--line)}
@@ -139,7 +139,7 @@
       .container-page{width:min(100% - 36px,1480px)}.glass-card{backdrop-filter:none;-webkit-backdrop-filter:none}
       .gradient-text{background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:initial;color:inherit}.eyebrow{justify-content:center;font-size:10px;letter-spacing:.13em}.eyebrow::before{display:none}
       .nav-shell{top:0}.nav-inner{width:100%;border-radius:0;padding:12px 18px;background:var(--nav-bg);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-color:var(--line);box-shadow:none}.nav-shell.nav-blur .nav-inner,.nav-shell.menu-open .nav-inner{background:var(--nav-bg-active);border-color:var(--line);box-shadow:0 10px 32px rgba(0,0,0,.08)}
-      .brand{gap:9px}.brand-mark{width:28px;height:28px;border-radius:9px;box-shadow:none}.brand-text{font-size:15px;max-width:128px;letter-spacing:-.04em;color:var(--nav-text)}.nav-actions{gap:6px}.theme-toggle,.menu-toggle{min-height:36px;padding:8px 12px;font-size:12px}.menu-toggle{display:inline-flex;align-items:center}.mobile-menu{width:100%;margin:0;border-radius:0 0 24px 24px;background:var(--nav-bg-active);border-color:var(--line);box-shadow:0 18px 40px rgba(0,0,0,.10)}
+      .brand{gap:9px}.brand-mark{width:28px;height:28px;border-radius:9px;box-shadow:none}.brand-text{font-size:15px;max-width:128px;letter-spacing:-.04em;color:var(--nav-text)}.nav-actions{gap:6px}.menu-toggle{min-height:36px;padding:8px 12px;font-size:12px;display:inline-flex;align-items:center}.mobile-menu{width:100%;margin:0;border-radius:0 0 24px 24px;background:var(--nav-bg-active);border-color:var(--line);box-shadow:0 18px 40px rgba(0,0,0,.10)}
       .hero{min-height:auto;padding:104px 0 0;background:var(--bg-primary);overflow:hidden}.hero::after{display:none}.hero-grid{width:100%;gap:0;display:flex;flex-direction:column;align-items:center}.hero-copy{width:min(100% - 36px,440px);margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center}.hero-title{font-family:'Manrope',sans-serif;font-size:clamp(40px,12vw,54px);line-height:1.05;letter-spacing:-.055em;font-weight:850;margin-top:24px;color:var(--text-primary)}.hero-title .gradient-text{display:block;font-size:.88em}.hero-title span:not(.gradient-text){display:block;margin-top:5px;font-size:.70em;line-height:1.16;font-weight:750;letter-spacing:-.045em}.hero-subtitle{max-width:352px;margin:17px auto 0;color:var(--text-secondary);font-size:17px;line-height:1.56;letter-spacing:-.02em}.hero-actions{display:flex;justify-content:center;gap:12px;margin-top:23px}.btn-primary,.btn-outline{width:auto;min-height:43px;padding:12px 19px;font-size:15px;border-radius:999px}
       .hero-visual{width:100%;max-width:none;margin:42px 0 0}.hero-frame{width:100%;aspect-ratio:1.04/1;border-radius:0;border:0;box-shadow:none}.hero-frame img{object-fit:cover;filter:none}.hero-frame::after{display:none}.hero-frame .status-card{display:none}.hero-stats-desktop{display:none}.hero-stats-mobile{display:grid;width:min(100% - 36px,430px);grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px auto 0}.stat-pill{border-radius:22px;padding:17px 10px}.stat-pill strong{font-size:22px;font-weight:850}.stat-pill span{font-size:11px;margin-top:7px}
       section{padding:80px 0;background:var(--bg-primary);scroll-margin-top:76px}.scroll-stage:nth-of-type(even){background:var(--bg-secondary)}.section-head,.sticky-copy{max-width:370px;margin:0 auto 34px;text-align:center}.sticky-copy{position:relative;top:auto}.section-title{font-family:'Manrope',sans-serif;color:var(--text-primary);font-size:clamp(34px,10vw,48px);line-height:1.08;letter-spacing:-.055em;font-weight:850;margin-top:14px}.section-desc{color:var(--text-secondary);font-size:17px;line-height:1.64;letter-spacing:-.018em;margin-top:15px}
@@ -147,7 +147,7 @@
       .projects-grid,.skills-grid{grid-template-columns:1fr;gap:16px}.project-card,.skill-card,.quote-form{border-radius:28px}.project-media{aspect-ratio:1.24/1;background:var(--surface-soft)}.project-body{padding:23px 22px 24px}.badge{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent-2);border-color:color-mix(in srgb,var(--accent) 22%,transparent)}.year{color:var(--muted)}.project-body h3,.skill-card h3{font-size:24px;letter-spacing:-.045em}.project-body p{font-size:15px;line-height:1.68}.skill-card{padding:24px}.icon-box{background:color-mix(in srgb,var(--accent) 11%,transparent);color:var(--accent-2)}.skill-tag{background:var(--surface-soft);border-color:var(--line);color:var(--text-secondary)}
       .contact{padding-bottom:88px;background:var(--bg-primary)}.contact-copy .section-head,.contact-copy .section-title{text-align:center}.contact-links{gap:10px;margin-top:24px}.footer-row{justify-content:center;text-align:center}.editor-link{display:none}
     }
-    @media (min-width:768px){.hero-stats-mobile{display:none}.theme-toggle{display:inline-flex}}
+    @media (min-width:768px){.hero-stats-mobile{display:none}}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1!important;transform:none!important}}
   </style>
 </head>
@@ -177,7 +177,6 @@
               <a href="#contact">${esc(C.nav.contact)}</a>
             </div>
             <div class="nav-actions">
-              <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换主题" title="切换主题">亮</button>
               <button id="menuToggle" class="menu-toggle" type="button" aria-controls="mobileMenu" aria-expanded="false">菜单</button>
             </div>
           </div>
@@ -291,30 +290,28 @@
         </footer>`;
     }
 
-    function applyTheme(choice){
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const theme = choice === 'system' ? (prefersDark ? 'dark' : 'light') : choice;
+    function detectTheme(){
+      if(window.matchMedia){
+        if(window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+        if(window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+      }
+      const hour = new Date().getHours();
+      return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+    }
+
+    function applyTheme(theme){
       document.documentElement.dataset.theme = theme;
-      document.documentElement.dataset.themeChoice = choice;
-      localStorage.setItem('portfolio-theme', choice);
       const meta = document.querySelector('meta[name="theme-color"]');
       if(meta) meta.setAttribute('content', theme === 'dark' ? '#0b0b0f' : '#f5f5f7');
-      document.querySelectorAll('#themeToggle').forEach(btn=>{
-        btn.textContent = theme === 'dark' ? '暗' : '亮';
-        btn.setAttribute('aria-label', `当前${theme === 'dark' ? '暗黑' : '亮色'}模式，点击切换主题`);
-        btn.setAttribute('title', `当前${theme === 'dark' ? '暗黑' : '亮色'}模式`);
-      });
     }
 
     function initTheme(){
-      const saved = localStorage.getItem('portfolio-theme') || document.documentElement.dataset.themeChoice || 'light';
-      applyTheme(saved);
-      document.querySelectorAll('#themeToggle').forEach(btn=>btn.addEventListener('click',()=>{
-        const current = document.documentElement.dataset.theme || 'light';
-        applyTheme(current === 'dark' ? 'light' : 'dark');
-      }));
+      applyTheme(detectTheme());
       window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{
-        if((localStorage.getItem('portfolio-theme') || 'light') === 'system') applyTheme('system');
+        applyTheme(detectTheme());
+      });
+      window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change',()=>{
+        applyTheme(detectTheme());
       });
     }
 
