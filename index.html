@@ -156,7 +156,7 @@
   <div class="noise-overlay"></div>
   <canvas id="webgl-bg" aria-hidden="true"></canvas>
   <div id="app"></div>
-  <a class="editor-link js-edit-entry" href="editor.html" target="_blank" rel="noopener">编辑</a>
+  <a class="editor-link js-edit-entry" href="editor.html">编辑</a>
   <script src="content.js"></script>
   <script>
     const C = window.SITE_CONTENT || {};
@@ -186,7 +186,7 @@
             <a href="#projects">${esc(C.nav.projects)} ${arrowIcon}</a>
             <a href="#skills">${esc(C.nav.skills)} ${arrowIcon}</a>
             <a href="#contact">${esc(C.nav.contact)} ${arrowIcon}</a>
-            <a class="js-edit-entry" href="editor.html" target="_blank" rel="noopener">编辑 ${arrowIcon}</a>
+            <a class="js-edit-entry" href="editor.html">编辑 ${arrowIcon}</a>
           </div>
         </nav>
 
@@ -358,7 +358,7 @@
       btn?.addEventListener('click',toggleMenu);
       btn?.addEventListener('touchend',e=>{ e.preventDefault(); toggleMenu(e); });
 
-      menu?.querySelectorAll('a').forEach(a=>{
+      menu?.querySelectorAll('a:not(.js-edit-entry)').forEach(a=>{
         a.addEventListener('click',()=>{ closeMenu(); });
         a.addEventListener('touchend',e=>{
           e.preventDefault();
@@ -366,6 +366,11 @@
           closeMenu();
           setTimeout(()=>{ if(href) window.location.hash = href; },260);
         });
+      });
+      // Edit link: just close menu, let initEditorGate handle auth + navigation
+      menu?.querySelectorAll('a.js-edit-entry').forEach(a=>{
+        a.addEventListener('click',()=>{ setTimeout(()=>closeMenu(),100); });
+        a.addEventListener('touchend',()=>{ setTimeout(()=>closeMenu(),100); });
       });
 
       // Close menu on Escape key
@@ -382,7 +387,7 @@
       if(password === 'hqd125125'){
         sessionStorage.setItem('portfolio-cms-entry-ok','1');
         localStorage.setItem('portfolio-cms-entry-ok','1');
-        window.open(target + (target.includes('?')?'&':'?') + 'entry=auth','_blank','noopener');
+        location.href = target + (target.includes('?')?'&':'?') + 'entry=auth';
       }else if(password !== null){
         alert('密码不正确，无法进入管理界面。');
       }
