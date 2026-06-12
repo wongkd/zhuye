@@ -1,36 +1,37 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const origin = request.headers.get("Origin") || "";
 
     if (request.method === "OPTIONS") {
-      return corsResponse(null, 204, env);
+      return corsResponse(null, 204, env, origin);
     }
 
     if (url.pathname === "/api/health") {
-      return json({ ok: true, service: "zhuye-portfolio-cms", repo: `${env.GITHUB_OWNER}/${env.GITHUB_REPO}` }, 200, env);
+      return json({ ok: true, service: "zhuye-portfolio-cms", repo: `${env.GITHUB_OWNER}/${env.GITHUB_REPO}` }, 200, env, origin);
     }
 
     if (url.pathname !== "/api/save-content" || request.method !== "POST") {
-      return json({ ok: false, error: "Not Found" }, 404, env);
+      return json({ ok: false, error: "Not Found" }, 404, env, origin);
     }
 
     const authHeader = request.headers.get("Authorization") || "";
     const expected = `Bearer ${env.CMS_PASSWORD}`;
     if (!env.CMS_PASSWORD || authHeader !== expected) {
-      return json({ ok: false, error: "Unauthorized" }, 401, env);
+      return json({ ok: false, error: "Unauthorized" }, 401, env, origin);
     }
 
     let body;
     try {
       body = await request.json();
     } catch (error) {
-      return json({ ok: false, error: "JSON 格式错误" }, 400, env);
+      return json({ ok: false, error: "JSON 格式错误" }, 400, env, origin);
     }
 
     const content = body.content || body;
     const validation = validateContent(content);
     if (!validation.ok) {
-      return json(validation, 400, env);
+      return json(validation, 400, env, origin);
     }
 
     const owner = env.GITHUB_OWNER;
@@ -40,7 +41,7 @@ export default {
     const token = env.GITHUB_TOKEN;
 
     if (!owner || !repo || !token) {
-      return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env);
+      return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env, origin);
     }
 
     const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponentPath(filePath)}`;
@@ -54,7 +55,7 @@ export default {
       sha = current.sha;
     } else if (getResp.status !== 404) {
       const text = await getResp.text();
-      return json({ ok: false, error: "读取 GitHub 文件失败", detail: text }, getResp.status, env);
+      return json({ ok: false, error: "读取 GitHub 文件失败", detail: text }, getResp.status, env, origin);
     }
 
     const js = "window.SITE_CONTENT = " + JSON.stringify(content, null, 2) + ";\n";
@@ -72,7 +73,7 @@ export default {
 
     const result = await updateResp.json().catch(() => ({}));
     if (!updateResp.ok) {
-      return json({ ok: false, error: "写入 GitHub 失败", detail: result }, updateResp.status, env);
+      return json({ ok: false, error: "写入 GitHub 失败", detail: result }, updateResp.status, env, origin);
     }
 
     return json({
@@ -81,7 +82,7 @@ export default {
       commit: result.commit?.html_url,
       path: filePath,
       branch
-    }, 200, env);
+    }, 200, env, origin);
   }
 };
 
@@ -103,12 +104,16 @@ function githubHeaders(token) {
   };
 }
 
-function json(data, status = 200, env) {
-  return corsResponse(JSON.stringify(data), status, env, "application/json; charset=utf-8");
+function json(data, status = 200, env, origin = "") {
+  return corsResponse(JSON.stringify(data), status, env, "application/json; charset=utf-8", origin);
 }
 
-function corsResponse(body, status = 200, env, contentType = "text/plain; charset=utf-8") {
-  const origin = env?.ALLOWED_ORIGIN || "https://zhuye.huangqidong.cn";
+function corsResponse(body, status = 200, env, contentType = "text/plain; charset=utf-8", requestOrigin = "") {
+  const allowedOrigins = [env?.ALLOWED_ORIGIN, env?.ALLOWED_ORIGIN_DEV].filter(Boolean);
+  let origin = env?.ALLOWED_ORIGIN || "https://zhuye.huangqidong.cn";
+  if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+    origin = requestOrigin;
+  }
   return new Response(body, {
     status,
     headers: {

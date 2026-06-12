@@ -8,6 +8,7 @@ GITHUB_REPO = "zhuye"
 GITHUB_BRANCH = "main"
 GITHUB_CONTENT_PATH = "content.js"
 ALLOWED_ORIGIN = "https://zhuye.huangqidong.cn"
+ALLOWED_ORIGIN_DEV = "https://zhuye-7j5.pages.dev"
 
 # 敏感变量不要写在这里，用命令设置：
 # npx wrangler secret put GITHUB_TOKEN
