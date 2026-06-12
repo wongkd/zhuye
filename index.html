@@ -246,7 +246,7 @@
     function openEditorWithAuth(e){
       e?.preventDefault();
       const target = e?.currentTarget?.getAttribute('href') || 'editor.html';
-      const cached = sessionStorage.getItem('portfolio-cms-entry-ok');
+      const cached = localStorage.getItem('portfolio-cms-entry-ok') || sessionStorage.getItem('portfolio-cms-entry-ok');
       let password = cached === '1' ? 'hqd125125' : prompt('请输入管理密码');
       if(password === 'hqd125125'){
         sessionStorage.setItem('portfolio-cms-entry-ok','1');
