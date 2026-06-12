@@ -3,6 +3,18 @@ const C = window.SITE_CONTENT || {};
     const arrowIcon = `<svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>`;
     const skillIcon = `<svg width="26" height="26" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 7h16M7 4v16m10-16v16M4 17h16"/></svg>`;
     const contactIcon = `<svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/></svg>`;
+    const externalIcon = `<svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7M9 7h8v8"/></svg>`;
+
+    function renderChannelCard(ch, compact=false){
+      const image = ch.image ? `<img src="${esc(ch.image)}" alt="${esc(ch.imageAlt || ch.name)}" loading="lazy">` : `<div class="qr-placeholder"><span>${esc((ch.name || 'QR').slice(0,3))}</span><small>后台上传</small></div>`;
+      return `<article class="qr-card${compact ? ' compact' : ''}"><div class="qr-image">${image}</div><div class="qr-info"><div class="qr-label">${esc(ch.label || '扫码了解')}</div><h3>${esc(ch.name || '联系渠道')}</h3><p>${esc(ch.description || '')}</p></div></article>`;
+    }
+
+    function renderNavContact(){
+      const channels = C.contact?.channels || [];
+      if(!channels.length) return `<a href="#contact">${esc(C.nav.contact)}</a>`;
+      return `<div class="nav-contact-wrap"><a class="nav-contact-trigger" href="#contact" aria-haspopup="true" aria-expanded="false">${esc(C.nav.contact)}</a><div class="nav-contact-panel" role="group" aria-label="联系二维码"><div class="nav-contact-panel-head"><strong>扫码快速联系</strong><span>微信 / 抖音 / 小红书</span></div><div class="nav-qr-grid">${channels.map(ch=>renderChannelCard(ch,true)).join('')}</div></div></div>`;
+    }
 
     function render(){
       document.title = C.site?.title || '广东表里如一工程有限公司 | BLRY';
@@ -14,7 +26,7 @@ const C = window.SITE_CONTENT || {};
               <a href="#about">${esc(C.nav.about)}</a>
               <a href="#projects">${esc(C.nav.projects)}</a>
               <a href="#skills">${esc(C.nav.skills)}</a>
-              <a href="#contact">${esc(C.nav.contact)}</a>
+              ${renderNavContact()}
               <button class="theme-toggle js-theme-toggle" type="button" aria-label="切换浅色、深色或系统主题">
                 <span class="theme-toggle-icon" aria-hidden="true"></span>
                 <span class="theme-toggle-label">当前主题：系统</span>
@@ -49,8 +61,8 @@ const C = window.SITE_CONTENT || {};
                 <h1 class="font-display hero-title reveal"><span class="gradient-text">${esc(C.hero.titleHighlight)}</span><br><span>${esc(C.hero.titleMain)}</span></h1>
                 <p class="hero-subtitle reveal">${esc(C.hero.subtitle)}</p>
                 <div class="hero-actions reveal">
-                  <a href="#projects" class="btn-primary">${esc(C.hero.primaryButton)} ${arrowIcon}</a>
-                  <a href="#contact" class="btn-outline">${esc(C.hero.secondaryButton)}</a>
+                  <a href="${esc(C.hero.primaryUrl || '#projects')}" class="btn-primary"${/^https?:\/\//.test(C.hero.primaryUrl || '') ? ' target="_blank" rel="noopener"' : ''}>${esc(C.hero.primaryButton)} ${/^https?:\/\//.test(C.hero.primaryUrl || '') ? externalIcon : arrowIcon}</a>
+                  <a href="${esc(C.hero.secondaryUrl || '#contact')}" class="btn-outline">${esc(C.hero.secondaryButton)}</a>
                 </div>
                 <div class="stats-row hero-stats-desktop reveal">
                   ${(C.hero.stats||[]).map(s=>`<div class="stat-pill"><strong>${esc(s.value)}</strong><span>${esc(s.label)}</span></div>`).join('')}
@@ -120,7 +132,7 @@ const C = window.SITE_CONTENT || {};
                 <p class="section-desc reveal">${esc(C.skillsSection.description)}</p>
               </div>
               <div class="skills-grid">
-                ${(C.skillGroups||[]).map((g,index)=>`<article class="glass-card skill-card pricing-card reveal${g.featured ? ' featured' : ''}"><div class="icon-box">${skillIcon}</div><div class="pricing-card-index">${String(index + 1).padStart(2,'0')}</div><h3>${esc(g.title)}</h3>${g.price ? `<div class="pricing-price">${esc(g.price)}</div>` : ''}${g.standard ? `<p class="pricing-standard">${esc(g.standard)}</p>` : ''}<div class="skill-tags">${(g.items||[]).map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div>${g.note ? `<p class="pricing-note">${esc(g.note)}</p>` : ''}</article>`).join('')}
+                ${(C.skillGroups||[]).map((g,index)=>`<article class="glass-card skill-card pricing-card reveal${g.featured ? ' featured' : ''}"><div class="icon-box">${skillIcon}</div><div class="pricing-card-index">${String(index + 1).padStart(2,'0')}</div><h3>${esc(g.title)}</h3>${g.price ? `<div class="pricing-price">${esc(g.price)}</div>` : ''}${g.standard ? `<p class="pricing-standard">${esc(g.standard)}</p>` : ''}<div class="skill-tags">${(g.items||[]).map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div>${g.note ? `<p class="pricing-note">${esc(g.note)}</p>` : ''}${g.featured ? `<div class="featured-guide"><span>先看这个</span><strong>成本价透明 + 管理费清楚</strong></div>` : ''}</article>`).join('')}
               </div>
             </div>
           </section>
@@ -132,6 +144,12 @@ const C = window.SITE_CONTENT || {};
                   <span class="eyebrow reveal">${esc(C.contact.eyebrow)}</span>
                   <h2 class="font-display section-title reveal">${esc(C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.titleHighlight)}</span></h2>
                   <p class="section-desc reveal">${esc(C.contact.description)}</p>
+                </div>
+                <div class="contact-links reveal">
+                  ${(C.contact.links||[]).map(l=>`<a class="contact-link" href="${esc(l.url||'#contact')}"><span class="contact-icon">${contactIcon}</span><span>${esc(l.label)}</span>${arrowIcon}</a>`).join('')}
+                </div>
+                <div class="contact-channel-board reveal" aria-label="扫码联系与关注">
+                  ${(C.contact.channels||[]).map(ch=>renderChannelCard(ch)).join('')}
                 </div>
               </div>
               <form class="glass-card quote-form reveal" novalidate>
@@ -362,7 +380,7 @@ const C = window.SITE_CONTENT || {};
       const unique = nodes => Array.from(new Set(Array.from(nodes).filter(Boolean)));
       const setStagger = (nodes, step = 1) => unique(nodes).forEach((el,i)=>el.style.setProperty('--stagger-index', String(i * step)));
       const bindPressFeedback = () => {
-        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
+        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .qr-card, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
           const down = () => el.classList.add('is-pressed');
           const up = () => el.classList.remove('is-pressed');
           el.addEventListener('pointerdown', down, { passive:true });
@@ -385,7 +403,7 @@ const C = window.SITE_CONTENT || {};
       if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});ready();return;}
       if(isMobile){
         if(window.ScrollTrigger){ ScrollTrigger.getAll().forEach(st=>st.kill()); }
-        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .quote-form'));
+        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .quote-form'));
         mobileTargets.forEach((el,i)=>{
           el.classList.add('mobile-reveal');
           el.style.transitionDelay = `${Math.min(i * 60, 350)}ms`;
@@ -471,7 +489,7 @@ const C = window.SITE_CONTENT || {};
       });
 
       // Contact form — simple rise
-      document.querySelectorAll('.quote-form').forEach((el,i)=>{
+      document.querySelectorAll('.contact-channel-board, .quote-form').forEach((el,i)=>{
         gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.6, delay:Math.min(i*.06,.18), ease:'power3.out' });
       });
 

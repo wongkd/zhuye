@@ -18,8 +18,10 @@ window.SITE_CONTENT = {
     "titleHighlight": "表里如一",
     "titleMain": "把家装成理想生活",
     "subtitle": "专注豪宅装修、智能化生活方式与公共空间，从预算、设计、施工到交付，用透明流程和可靠执行帮你少走弯路。",
-    "primaryButton": "查看服务案例",
-    "secondaryButton": "获取报价预估",
+    "primaryButton": "一键计算报价",
+    "primaryUrl": "https://jisuanqi.huangqidong.cn",
+    "secondaryButton": "查看服务案例",
+    "secondaryUrl": "#projects",
     "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=900&h=900&fit=crop",
     "imageAlt": "现代住宅室内装修空间",
     "statusLabel": "服务状态",
@@ -182,8 +184,34 @@ window.SITE_CONTENT = {
     "eyebrow": "报价预估",
     "titleTop": "告诉我们你的房子，",
     "titleHighlight": "先把预算算清楚",
-    "description": "留下户型、面积、城市和装修想法，我们会根据需求给出初步预算判断和方案建议。未确定风格也没关系，先把大方向聊清楚。",
+    "description": "留下户型、面积、城市和装修想法，我们会根据需求给出初步预算判断和方案建议。未确定风格也没关系，先把大方向聊清楚。也可以直接扫码添加微信，或在抖音、小红书查看施工现场与案例灵感。",
     "email": "563838884@qq.com",
+    "channels": [
+      {
+        "name": "微信咨询",
+        "label": "优先推荐",
+        "description": "扫码添加微信，发送户型图、面积和预算诉求，沟通更直接。",
+        "image": "assets/images/contact/wechat-qr.png",
+        "imageAlt": "微信咨询二维码",
+        "url": "#contact"
+      },
+      {
+        "name": "抖音主页",
+        "label": "现场视频",
+        "description": "查看施工现场、工艺细节与装修避坑内容。",
+        "image": "assets/images/contact/douyin-qr.png",
+        "imageAlt": "抖音主页二维码",
+        "url": "#contact"
+      },
+      {
+        "name": "小红书主页",
+        "label": "待上传",
+        "description": "后续用于展示案例笔记、装修灵感和材料搭配参考。",
+        "image": "",
+        "imageAlt": "小红书主页二维码占位",
+        "url": "#contact"
+      }
+    ],
     "links": [
       {
         "label": "装修预算咨询",
