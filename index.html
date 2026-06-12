@@ -131,7 +131,16 @@
     .projects-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.project-card{overflow:hidden;transition:transform .35s ease,border-color .35s ease}.project-card:hover{transform:translateY(-6px);border-color:rgba(215,183,131,.28)}.project-media{aspect-ratio:16/10;overflow:hidden;background:#161616}.project-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.8,.2,1)}.project-card:hover .project-image{transform:scale(1.06)}.project-body{padding:28px}.meta-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}.badge{font-size:12px;color:#f0d4a8;background:rgba(174,133,85,.14);border:1px solid rgba(174,133,85,.24);border-radius:999px;padding:6px 10px;font-weight:800}.year{font-size:12px;color:var(--muted)}    .project-body h3{font-size:24px;font-weight:850;letter-spacing:-.03em;margin-bottom:10px;color:var(--text-primary)}.project-body p{color:var(--text-secondary);line-height:1.75;margin-bottom:20px}.text-link{display:inline-flex;align-items:center;gap:8px;color:var(--accent-2);font-weight:800;text-decoration:none;transition:color .2s ease}.text-link:hover{color:var(--accent)}
     .skills-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.skill-card{padding:30px}.icon-box{width:56px;height:56px;border-radius:20px;background:linear-gradient(135deg,rgba(174,133,85,.18),rgba(47,57,67,.10));display:grid;place-items:center;color:var(--accent-2);margin-bottom:22px}.skill-card h3{font-size:23px;font-weight:850;margin-bottom:18px;color:var(--text-primary)}.skill-tags{display:flex;flex-wrap:wrap;gap:9px}.skill-tag{display:inline-flex;padding:9px 12px;border-radius:999px;background:color-mix(in srgb,var(--surface-soft) 78%,transparent);border:1px solid var(--line);color:var(--text-secondary);font-size:13px;font-weight:700;transition:all .2s ease}.skill-tag:hover{background:color-mix(in srgb,var(--accent) 14%,transparent);border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:var(--text-primary)}
     .contact{padding-bottom:128px}.contact-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(360px,1.08fr);gap:56px;align-items:center}.contact-copy .section-title{text-align:left}.contact-copy .section-head{text-align:left;margin:0}.contact-links{display:grid;gap:12px;margin-top:34px}.contact-link{display:flex;align-items:center;gap:14px;color:var(--text-primary);text-decoration:none;padding:14px;border-radius:18px;background:var(--surface-raised);border:1px solid var(--line);transition:all .2s ease;box-shadow:0 10px 24px rgba(0,0,0,.05)}.contact-link:hover{border-color:color-mix(in srgb,var(--accent) 32%,transparent);background:color-mix(in srgb,var(--accent) 10%,var(--surface-raised));color:var(--text-primary)}.contact-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:var(--surface-soft);color:var(--accent-2);flex:0 0 auto}.quote-form{padding:30px}.field{margin-bottom:18px}.field label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:8px;font-weight:800}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--surface-soft);color:var(--text-primary);border-radius:16px;padding:14px 15px;outline:none;transition:border-color .2s ease,background .2s ease;font:inherit}.field input::placeholder,.field textarea::placeholder{color:var(--muted)}.field input:focus,.field select:focus,.field textarea:focus{border-color:color-mix(in srgb,var(--accent) 65%,transparent);background:var(--surface-raised)}.field textarea{min-height:126px;resize:vertical}.submit-btn{width:100%;border:0}.form-note{color:var(--muted);font-size:12px;line-height:1.7;margin-top:12px}
-    footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px;background:var(--bg-primary)}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.editor-link{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:90;background:var(--text-primary);color:var(--bg-primary);padding:11px 18px;border-radius:999px;font-weight:900;text-decoration:none;box-shadow:0 18px 44px rgba(0,0,0,.24);transition:.25s}.editor-link:hover{transform:translateY(-3px)}.reveal{opacity:0;transform:translateY(28px)}
+    footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px;background:var(--bg-primary)}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .login-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:900;display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;font-weight:900;font-size:14px;line-height:1;cursor:pointer;border:0;text-decoration:none;transition:all .3s cubic-bezier(.16,1,.3,1);background:linear-gradient(135deg,var(--accent) 0%,#caa06c 100%);color:#fff;box-shadow:0 14px 40px rgba(174,133,85,.34)}.login-fab:hover{transform:translateY(-3px);box-shadow:0 20px 52px rgba(174,133,85,.42)}.login-fab.logged-in{background:var(--surface-raised);color:var(--text-primary);box-shadow:0 14px 40px rgba(0,0,0,.18);border:1px solid var(--line)}.login-fab.logged-in:hover{box-shadow:0 20px 52px rgba(0,0,0,.22)}
+    .login-overlay{position:fixed;inset:0;z-index:901;background:rgba(0,0,0,.44);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .28s ease}.login-overlay.open{opacity:1;pointer-events:auto}
+    .login-modal{width:100%;max-width:380px;background:var(--surface-raised);border:1px solid var(--line);border-radius:28px;padding:36px 32px 32px;box-shadow:0 36px 96px rgba(0,0,0,.28);transform:translateY(16px) scale(.96);transition:transform .32s cubic-bezier(.16,1,.3,1)}.login-overlay.open .login-modal{transform:translateY(0) scale(1)}
+    .login-modal h2{font-family:'Manrope',sans-serif;font-size:22px;font-weight:850;letter-spacing:-.035em;margin-bottom:6px;color:var(--text-primary)}.login-modal .login-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.55}
+    .login-modal .login-field{margin-bottom:16px}.login-modal .login-field label{display:block;font-size:12px;font-weight:800;color:var(--text-secondary);margin-bottom:6px}.login-modal .login-field input{width:100%;border:1px solid var(--line);background:var(--surface-soft);color:var(--text-primary);border-radius:14px;padding:13px 15px;font:inherit;outline:none;transition:border-color .2s ease,background .2s ease}.login-modal .login-field input:focus{border-color:var(--accent);background:var(--surface-raised)}
+    .login-modal .login-error{font-size:12px;color:#e53e3e;margin-top:8px;display:none}.login-modal .login-error.show{display:block}
+    .login-modal .login-submit{width:100%;margin-top:6px;border:0;cursor:pointer;background:linear-gradient(135deg,var(--accent) 0%,#caa06c 100%);color:#fff;border-radius:999px;padding:13px;font-weight:900;font-size:15px;transition:transform .2s ease,box-shadow .2s ease}.login-modal .login-submit:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(174,133,85,.32)}
+    .login-modal .login-close{position:absolute;top:14px;right:14px;border:0;background:var(--surface-soft);color:var(--muted);width:36px;height:36px;border-radius:999px;cursor:pointer;font-size:18px;line-height:1;display:grid;place-items:center;transition:background .2s ease,color .2s ease}.login-modal .login-close:hover{background:var(--line);color:var(--text-primary)}
+    .reveal{opacity:0;transform:translateY(28px)}
     @media (min-width:768px){.scroll-stage{will-change:transform,opacity,filter}.scroll-stage::before{content:'';position:absolute;inset:54px auto auto 4vw;width:96px;height:1px;background:linear-gradient(90deg,rgba(215,183,131,.65),transparent);opacity:.35}.project-card,.skill-card,.timeline-card{transform-style:preserve-3d}.section-title .gradient-text{filter:drop-shadow(0 18px 40px rgba(174,133,85,.15))}}
     @media (max-width:1024px){.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:42px}.sticky-copy{position:relative;top:auto}.hero{min-height:auto}.hero-visual{max-width:520px}.projects-grid{gap:18px}.skills-grid{grid-template-columns:1fr 1fr}.contact-copy .section-head{text-align:center;margin:0 auto}.contact-copy .section-title{text-align:center}}
     @media (max-width:767px){
@@ -146,7 +155,7 @@
       section{padding:80px 0;background:var(--bg-primary);scroll-margin-top:76px}.scroll-stage:nth-of-type(even){background:var(--bg-secondary)}.section-head,.sticky-copy{max-width:370px;margin:0 auto 34px;text-align:center}.sticky-copy{position:relative;top:auto}.section-title{font-family:'Manrope',sans-serif;color:var(--text-primary);font-size:clamp(34px,10vw,48px);line-height:1.08;letter-spacing:-.055em;font-weight:850;margin-top:14px}.section-desc{color:var(--text-secondary);font-size:17px;line-height:1.64;letter-spacing:-.018em;margin-top:15px}
       .about-grid{gap:0}.timeline{gap:14px}.timeline-card{padding:24px 22px;border-radius:26px}.timeline-top{display:grid;grid-template-columns:1fr auto;align-items:start}.timeline-card h3{font-size:22px;letter-spacing:-.04em}.timeline-card .company{font-size:13px;line-height:1.55}.timeline-card .period{display:inline-flex;margin-top:0}.timeline-card p{font-size:15px;line-height:1.72;margin-top:14px}.about-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.about-stat{border-radius:24px;padding:24px 12px}.stat-number{font-family:'Manrope',sans-serif;font-size:34px;font-weight:850}.about-stat .text-stone-400{color:var(--muted)!important}
       .projects-grid,.skills-grid{grid-template-columns:1fr;gap:16px}.project-card,.skill-card,.quote-form{border-radius:28px}.project-media{aspect-ratio:1.24/1;background:var(--surface-soft)}.project-body{padding:23px 22px 24px}.badge{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent-2);border-color:color-mix(in srgb,var(--accent) 22%,transparent)}.year{color:var(--muted)}.project-body h3,.skill-card h3{font-size:24px;letter-spacing:-.045em}.project-body p{font-size:15px;line-height:1.68}.skill-card{padding:24px}.icon-box{background:color-mix(in srgb,var(--accent) 11%,transparent);color:var(--accent-2)}.skill-tag{background:var(--surface-soft);border-color:var(--line);color:var(--text-secondary)}
-      .contact{padding-bottom:88px;background:var(--bg-primary)}.contact-copy .section-head,.contact-copy .section-title{text-align:center}.contact-links{gap:10px;margin-top:24px}.footer-row{justify-content:center;text-align:center}.editor-link{display:none}
+      .contact{padding-bottom:88px;background:var(--bg-primary)}.contact-copy .section-head,.contact-copy .section-title{text-align:center}.contact-links{gap:10px;margin-top:24px}.footer-row{justify-content:center;text-align:center}.login-fab{display:none}.login-modal{max-width:calc(100vw - 48px);padding:32px 24px 28px;border-radius:26px}.login-modal h2{font-size:20px}
     }
     @media (min-width:768px){.hero-stats-mobile{display:none}}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1!important;transform:none!important}}
@@ -156,7 +165,18 @@
   <div class="noise-overlay"></div>
   <canvas id="webgl-bg" aria-hidden="true"></canvas>
   <div id="app"></div>
-  <a class="editor-link js-edit-entry" href="editor.html">编辑</a>
+  <a class="login-fab js-login-entry" href="javascript:void(0)" role="button" aria-label="登录管理后台">登录</a>
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-modal">
+      <button class="login-close js-login-close" type="button" aria-label="关闭登录">&times;</button>
+      <h2>管理后台登录</h2>
+      <p class="login-sub">欢迎回来，请输入凭据继续管理网站内容</p>
+      <div class="login-field"><label for="loginUsername">用户名</label><input id="loginUsername" type="text" placeholder="admin" autocomplete="username"></div>
+      <div class="login-field"><label for="loginPassword">密码</label><input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="login-error js-login-error">用户名或密码不正确</div>
+      <button class="login-submit js-login-submit" type="button">登录管理后台</button>
+    </div>
+  </div>
   <script src="content.js"></script>
   <script>
     const C = window.SITE_CONTENT || {};
@@ -186,7 +206,7 @@
             <a href="#projects">${esc(C.nav.projects)} ${arrowIcon}</a>
             <a href="#skills">${esc(C.nav.skills)} ${arrowIcon}</a>
             <a href="#contact">${esc(C.nav.contact)} ${arrowIcon}</a>
-            <a class="js-edit-entry" href="editor.html">编辑 ${arrowIcon}</a>
+            <a class="js-edit-entry" href="javascript:void(0)">登录 ${arrowIcon}</a>
           </div>
         </nav>
 
@@ -367,10 +387,10 @@
           setTimeout(()=>{ if(href) window.location.hash = href; },260);
         });
       });
-      // Edit link: just close menu, let initEditorGate handle auth + navigation
+      // Edit link: close menu first, then trigger login modal
       menu?.querySelectorAll('a.js-edit-entry').forEach(a=>{
-        a.addEventListener('click',()=>{ setTimeout(()=>closeMenu(),100); });
-        a.addEventListener('touchend',()=>{ setTimeout(()=>closeMenu(),100); });
+        a.addEventListener('click',()=>{ closeMenu(); });
+        a.addEventListener('touchend',e=>{ e.preventDefault(); closeMenu(); });
       });
 
       // Close menu on Escape key
@@ -379,22 +399,73 @@
       });
     }
 
-    function openEditorWithAuth(e){
-      e?.preventDefault();
-      const target = e?.currentTarget?.getAttribute('href') || 'editor.html';
-      const cached = localStorage.getItem('portfolio-cms-entry-ok') || sessionStorage.getItem('portfolio-cms-entry-ok');
-      let password = cached === '1' ? 'hqd125125' : prompt('请输入管理密码');
-      if(password === 'hqd125125'){
+    function updateLoginFab(){
+      const loggedIn = localStorage.getItem('portfolio-cms-entry-ok') === '1';
+      document.querySelectorAll('.login-fab').forEach(btn=>{
+        btn.classList.toggle('logged-in',loggedIn);
+        btn.innerHTML = loggedIn
+          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>管理后台`
+          : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>登录`;
+        btn.setAttribute('aria-label',loggedIn?'管理后台':'登录管理后台');
+      });
+    }
+
+    function doLogin(){
+      const username = (document.getElementById('loginUsername')?.value || '').trim();
+      const password = document.getElementById('loginPassword')?.value || '';
+      const err = document.querySelector('.js-login-error');
+      if((username === 'admin' || username === '') && password === 'hqd125125'){
         sessionStorage.setItem('portfolio-cms-entry-ok','1');
         localStorage.setItem('portfolio-cms-entry-ok','1');
-        location.href = target + (target.includes('?')?'&':'?') + 'entry=auth';
-      }else if(password !== null){
-        alert('密码不正确，无法进入管理界面。');
+        closeLoginModal();
+        updateLoginFab();
+        location.href = 'editor.html?entry=auth';
+      }else{
+        if(err) err.classList.add('show');
       }
     }
 
-    function initEditorGate(){
-      document.querySelectorAll('.js-edit-entry').forEach(a=>a.addEventListener('click',openEditorWithAuth));
+    function doLogout(e){
+      e?.preventDefault();
+      sessionStorage.removeItem('portfolio-cms-entry-ok');
+      localStorage.removeItem('portfolio-cms-entry-ok');
+      updateLoginFab();
+      alert('已退出登录。');
+    }
+
+    function openLoginModal(e){
+      e?.preventDefault();
+      const overlay = document.getElementById('loginOverlay');
+      if(!overlay) return;
+      const loggedIn = localStorage.getItem('portfolio-cms-entry-ok') === '1';
+      if(loggedIn){ doLogout(e); return; }
+      // Ensure body is free before locking for modal
+      document.body.style.overflow = 'hidden';
+      overlay.classList.add('open');
+      const err = overlay.querySelector('.js-login-error');
+      if(err) err.classList.remove('show');
+      const pw = overlay.querySelector('#loginPassword');
+      if(pw){ pw.value = ''; setTimeout(()=>pw.focus(),260); }
+    }
+
+    function closeLoginModal(){
+      const overlay = document.getElementById('loginOverlay');
+      if(!overlay) return;
+      overlay.classList.remove('open');
+      if(!document.body.classList.contains('menu-locked')) document.body.style.overflow = '';
+    }
+
+    function initLogin(){
+      updateLoginFab();
+      document.querySelectorAll('.js-edit-entry').forEach(a=>a.addEventListener('click',openLoginModal));
+      document.querySelectorAll('.login-fab').forEach(btn=>btn.addEventListener('click',openLoginModal));
+      document.querySelector('.js-login-submit')?.addEventListener('click',doLogin);
+      document.querySelector('.js-login-close')?.addEventListener('click',closeLoginModal);
+      document.getElementById('loginOverlay')?.addEventListener('click',e=>{ if(e.target === e.currentTarget) closeLoginModal(); });
+      document.addEventListener('keydown',e=>{
+        if(e.key === 'Escape') closeLoginModal();
+        if(e.key === 'Enter' && document.getElementById('loginOverlay')?.classList.contains('open')) doLogin();
+      });
     }
 
     function initAnimations(){
@@ -474,7 +545,7 @@
     render();
     initTheme();
     initMenu();
-    initEditorGate();
+    initLogin();
     initWebGL();
     initAnimations();
   </script>
