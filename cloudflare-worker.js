@@ -17,17 +17,22 @@ export default {
       return handleSave(request, env, origin);
     }
 
-    // --- Website proxy: serve from GitHub Pages ---
-    const SOURCE = "https://wongkd.github.io/zhuye";
+    // --- Website proxy: serve directly from GitHub raw files ---
+    // Avoid GitHub Pages custom-domain redirects and mobile/proxy caches that can keep stale HTML.
+    const SOURCE = "https://raw.githubusercontent.com/wongkd/zhuye/main";
     let targetPath = url.pathname;
-    if (targetPath === "/" || targetPath === "") targetPath = "/";
-    
-    const targetUrl = SOURCE + targetPath + (url.search || "");
-    
+    if (targetPath === "/" || targetPath === "") targetPath = "/index.html";
+
+    const cacheBust = url.searchParams.get("v") || "0.9.1";
+    const targetUrl = new URL(SOURCE + targetPath);
+    for (const [key, value] of url.searchParams) targetUrl.searchParams.set(key, value);
+    targetUrl.searchParams.set("v", cacheBust);
+
     try {
-      const upstream = await fetch(targetUrl, {
+      const upstream = await fetch(targetUrl.toString(), {
         method: request.method,
-        headers: filterHeaders(request.headers, request.method)
+        headers: filterHeaders(request.headers, request.method),
+        cf: { cacheTtl: 0, cacheEverything: false }
       });
 
       const body = await upstream.arrayBuffer();
@@ -41,7 +46,10 @@ export default {
       }
       
       responseHeaders.set("X-Powered-By", "Cloudflare Worker Proxy");
-      responseHeaders.set("Cache-Control", "public, max-age=60");
+      responseHeaders.set("X-BLRY-Version", "0.9.1-debug-mobile-cache");
+      responseHeaders.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+      responseHeaders.set("Pragma", "no-cache");
+      responseHeaders.set("Expires", "0");
       
       // CORS for editor
       responseHeaders.set("Access-Control-Allow-Origin", "*");
