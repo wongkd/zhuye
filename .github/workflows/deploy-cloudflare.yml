@@ -1,11 +1,10 @@
-name: Deploy Cloudflare Worker and Pages
+name: Deploy Cloudflare Worker
 
 on:
   push:
     branches: [main]
     paths:
       - "cloudflare-worker.js"
-      - "functions/**"
       - "wrangler.toml"
       - ".github/workflows/deploy-cloudflare.yml"
   workflow_dispatch:
@@ -58,27 +57,8 @@ jobs:
           wranglerVersion: "4"
           command: deploy --config wrangler.toml
 
-  deploy-pages-functions:
-    name: Deploy Pages Functions
-    runs-on: ubuntu-latest
-    needs: deploy-worker
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Ensure Pages project exists
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4"
-          command: pages project create zhuye-7j5 --production-branch=main
-        continue-on-error: true
-
-      - name: Deploy Pages project
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: "4"
-          command: pages deploy . --project-name=zhuye-7j5 --branch=main --commit-dirty=true
+  # Pages Functions (functions/api/*.js) 不在本 workflow 自动部署，
+  # 因为 zhuye-7j5 Pages 项目已存在于 Dashboard，当前 API token 不支持通过 wrangler 创建项目。
+  # 当 functions/ 目录变更时，请在终端手动执行：
+  #   npx wrangler pages deploy . --project-name=zhuye-7j5 --branch=main --commit-dirty=true
+  # 或直接在 Cloudflare Dashboard 上传 functions/ 目录。
