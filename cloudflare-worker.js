@@ -17,6 +17,10 @@ export default {
       return handleSave(request, env, origin);
     }
 
+    if (url.pathname === "/api/content-meta" && request.method === "GET") {
+      return handleContentMeta(request, env, origin);
+    }
+
     if (url.pathname === "/api/history" && request.method === "GET") {
       return handleHistory(request, env, origin, url);
     }
@@ -119,16 +123,32 @@ async function handleSave(request, env, origin) {
   });
 
   let sha;
+  let currentMeta = null;
   if (getResp.status === 200) {
     const current = await getResp.json();
     sha = current.sha;
+    currentMeta = current;
   } else if (getResp.status !== 404) {
     const text = await getResp.text();
     return json({ ok: false, error: "读取 GitHub 文件失败", detail: text }, getResp.status, env, origin);
   }
 
+  const baseSha = String(body.baseSha || "").trim();
+  const force = Boolean(body.force);
+  if (baseSha && sha && baseSha !== sha && !force) {
+    return json({
+      ok: false,
+      code: "STALE_CONTENT",
+      error: "GitHub 上的 content.js 已有新版本。请先刷新编辑器后再同步，避免覆盖最新内容。",
+      baseSha,
+      currentSha: sha,
+      path: filePath,
+      branch
+    }, 409, env, origin);
+  }
+
   const js = "window.SITE_CONTENT = " + JSON.stringify(content, null, 2) + ";\n";
-  const message = body.message || `Update portfolio content ${new Date().toISOString()}`;
+  const message = normalizeCommitMessage(body.message || body.summary || "更新可视化编辑器内容");
   const updateResp = await fetch(apiBase, {
     method: "PUT",
     headers: githubHeaders(token),
@@ -149,8 +169,52 @@ async function handleSave(request, env, origin) {
     ok: true,
     message: "已同步到 GitHub，GitHub Pages 自动部署中",
     commit: result.commit?.html_url,
+    commitSha: result.commit?.sha,
+    previousSha: currentMeta?.sha || null,
     path: filePath,
     branch
+  }, 200, env, origin);
+}
+
+async function handleContentMeta(request, env, origin) {
+  if (!isAuthorized(request, env)) {
+    return json({ ok: false, error: "Unauthorized" }, 401, env, origin);
+  }
+
+  const { owner, repo, branch, filePath, token } = githubConfig(env);
+  if (missingGithubConfig({ owner, repo, token })) {
+    return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env, origin);
+  }
+
+  const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponentPath(filePath)}`;
+  const fileResp = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers: githubHeaders(token) });
+  const file = await fileResp.json().catch(() => ({}));
+  if (!fileResp.ok || !file.sha) {
+    return json({ ok: false, error: "读取 GitHub content.js 状态失败", detail: file }, fileResp.status, env, origin);
+  }
+
+  let commit = null;
+  const commitsUrl = `https://api.github.com/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&path=${encodeURIComponentPath(filePath)}&per_page=1`;
+  const commitResp = await fetch(commitsUrl, { headers: githubHeaders(token) });
+  const commits = await commitResp.json().catch(() => []);
+  if (commitResp.ok && Array.isArray(commits) && commits[0]) {
+    commit = {
+      sha: commits[0].sha,
+      shortSha: commits[0].sha.slice(0, 7),
+      message: commits[0].commit?.message || "无提交说明",
+      author: commits[0].commit?.author?.name || commits[0].author?.login || "unknown",
+      date: commits[0].commit?.author?.date || commits[0].commit?.committer?.date,
+      url: commits[0].html_url
+    };
+  }
+
+  return json({
+    ok: true,
+    path: filePath,
+    branch,
+    sha: file.sha,
+    size: file.size,
+    commit
   }, 200, env, origin);
 }
 
@@ -267,6 +331,15 @@ function validateContent(data) {
     if (!(key in data)) return { ok: false, error: `缺少字段：${key}` };
   }
   return { ok: true };
+}
+
+function normalizeCommitMessage(raw) {
+  const text = String(raw || "").replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+  const summary = text || "更新可视化编辑器内容";
+  if (/^(cms|content|feat|fix|docs|chore|refactor|style|perf|rollback)(\(.+\))?:\s/i.test(summary)) {
+    return summary.slice(0, 140);
+  }
+  return `cms: ${summary.slice(0, 120)}`;
 }
 
 function githubHeaders(token) {
