@@ -1,7 +1,13 @@
-content.backup.*.js
-.DS_Store
-Thumbs.db
+# Runtime / dependency noise
 node_modules/
+.wrangler/
 .env
 .env.*
-.wrangler/
+.DS_Store
+Thumbs.db
+
+# Historical files should stay out of normal Codex context
+archive/backups/
+archive/docs/
+*.backup.*
+content.backup.*.js

@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0b0b0f">
-  <meta name="app-version" content="0.9">
+  <meta name="app-version" content="1.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo.png">
   <title>广东表里如一工程有限公司 | BLRY</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -50,7 +52,11 @@
     .nav-inner{pointer-events:auto;width:min(100% - 32px,1480px);margin-inline:auto;padding:14px 16px;border:1px solid transparent;border-radius:999px;display:flex;align-items:center;justify-content:space-between;transition:all .35s ease}
     .nav-shell.nav-blur .nav-inner,.nav-shell.menu-open .nav-inner{background:rgba(9,9,13,.78);backdrop-filter:blur(22px);border-color:rgba(255,255,255,.1);box-shadow:0 18px 60px rgba(0,0,0,.28)}
     .brand{display:inline-flex;align-items:center;gap:10px;min-width:0;text-decoration:none;color:#fff;font-weight:900;letter-spacing:-.03em}
-    .brand-mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#2f3943);display:grid;place-items:center;font-size:13px;color:#fff;box-shadow:0 10px 28px rgba(174,133,85,.25);flex:0 0 auto}
+    .brand-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#2f3943);display:grid;place-items:center;font-size:13px;color:#fff;box-shadow:0 10px 28px rgba(174,133,85,.25);flex:0 0 auto;overflow:hidden;transition:width .25s,height .25s}
+    .brand-mark.has-logo{background:transparent;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+    .brand-mark img{width:100%;height:100%;object-fit:contain;display:block}
+    .brand-logo-img{display:block;height:38px;width:auto;max-width:160px;object-fit:contain;flex:0 0 auto}
+    @media(max-width:767px){.brand-mark{width:36px;height:36px}.brand-logo-img{height:30px;max-width:120px}}
     .brand-text{font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .nav-links{display:flex;align-items:center;gap:8px}
     .nav-links a{color:#d8d4ca;text-decoration:none;font-size:14px;font-weight:700;padding:12px 16px;border-radius:999px;transition:all .2s ease}
@@ -80,7 +86,8 @@
     .projects-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.project-card{overflow:hidden;transition:transform .35s ease,border-color .35s ease}.project-card:hover{transform:translateY(-6px);border-color:rgba(215,183,131,.28)}.project-media{aspect-ratio:16/10;overflow:hidden;background:#161616}.project-image{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.8,.2,1)}.project-card:hover .project-image{transform:scale(1.06)}.project-body{padding:28px}.meta-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}.badge{font-size:12px;color:#f0d4a8;background:rgba(174,133,85,.14);border:1px solid rgba(174,133,85,.24);border-radius:999px;padding:6px 10px;font-weight:800}.year{font-size:12px;color:var(--muted)}.project-body h3{font-size:24px;font-weight:850;letter-spacing:-.03em;margin-bottom:10px}.project-body p{color:var(--text-secondary);line-height:1.75;margin-bottom:20px}.text-link{display:inline-flex;align-items:center;gap:8px;color:#fff;font-weight:800;text-decoration:none;transition:color .2s ease}.text-link:hover{color:#f0d4a8}
     .skills-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.skill-card{padding:30px}.icon-box{width:56px;height:56px;border-radius:20px;background:linear-gradient(135deg,rgba(174,133,85,.22),rgba(47,57,67,.22));display:grid;place-items:center;color:#f0d4a8;margin-bottom:22px}.skill-card h3{font-size:23px;font-weight:850;margin-bottom:18px}.skill-tags{display:flex;flex-wrap:wrap;gap:9px}.skill-tag{display:inline-flex;padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08);color:#d8d0c2;font-size:13px;font-weight:700;transition:all .2s ease}.skill-tag:hover{background:rgba(174,133,85,.16);border-color:rgba(174,133,85,.3);color:#fff}
     .contact{padding-bottom:128px}.contact-grid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(360px,1.08fr);gap:56px;align-items:center}.contact-copy .section-title{text-align:left}.contact-copy .section-head{text-align:left;margin:0}.contact-links{display:grid;gap:12px;margin-top:34px}.contact-link{display:flex;align-items:center;gap:14px;color:#dfd6c9;text-decoration:none;padding:14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);transition:all .2s ease}.contact-link:hover{border-color:rgba(174,133,85,.32);background:rgba(174,133,85,.1);color:#fff}.contact-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;background:rgba(255,255,255,.06);flex:0 0 auto}.quote-form{padding:30px}.field{margin-bottom:18px}.field label{display:block;font-size:13px;color:#c6bfb2;margin-bottom:8px;font-weight:800}.field input,.field select,.field textarea{width:100%;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.055);color:#fff;border-radius:16px;padding:14px 15px;outline:none;transition:border-color .2s ease,background .2s ease;font:inherit}.field input::placeholder,.field textarea::placeholder{color:#756f67}.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(215,183,131,.65);background:rgba(255,255,255,.075)}.field textarea{min-height:126px;resize:vertical}.submit-btn{width:100%;border:0}.form-note{color:var(--muted);font-size:12px;line-height:1.7;margin-top:12px}
-    footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 0;color:var(--muted);font-size:13px}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.editor-link{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:90;background:#fff;color:#111;padding:11px 15px;border-radius:999px;font-weight:900;text-decoration:none;box-shadow:0 18px 44px rgba(0,0,0,.36);transition:.25s}.editor-link:hover{transform:translateY(-3px)}.reveal{opacity:0;transform:translateY(28px)}
+    footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 0;color:var(--muted);font-size:13px}.footer-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.editor-link{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:90;background:#fff;color:#111;padding:11px 18px;border-radius:999px;font-weight:900;text-decoration:none;box-shadow:0 18px 44px rgba(0,0,0,.36);transition:.25s}.editor-link:hover{transform:translateY(-3px)}.reveal{opacity:0;transform:translateY(28px)}
+    @media (min-width:768px){.scroll-stage{will-change:transform,opacity,filter}.scroll-stage::before{content:'';position:absolute;inset:54px auto auto 4vw;width:96px;height:1px;background:linear-gradient(90deg,rgba(215,183,131,.65),transparent);opacity:.35}.project-card,.skill-card,.timeline-card{transform-style:preserve-3d}.section-title .gradient-text{filter:drop-shadow(0 18px 40px rgba(174,133,85,.15))}}
     @media (max-width:1024px){.hero-grid,.about-grid,.contact-grid{grid-template-columns:1fr;gap:42px}.sticky-copy{position:relative;top:auto}.hero{min-height:auto}.hero-visual{max-width:520px}.projects-grid{gap:18px}.skills-grid{grid-template-columns:1fr 1fr}.contact-copy .section-head{text-align:center;margin:0 auto}.contact-copy .section-title{text-align:center}}
     @media (max-width:767px){:root{--nav-height:72px}.container-page{width:min(100% - 32px,1480px)}body::before{background:radial-gradient(circle at 18% 6%,rgba(174,133,85,.26),transparent 34%),radial-gradient(circle at 95% 20%,rgba(47,57,67,.28),transparent 32%),linear-gradient(135deg,#09090d,#111116 54%,#09090d)}#webgl-bg{display:none}.nav-shell{top:10px}.nav-inner{width:min(100% - 20px,1480px);padding:10px 10px 10px 12px}.brand-mark{width:30px;height:30px;border-radius:10px;font-size:12px}.brand-text{font-size:16px;max-width:210px}.nav-links{display:none}.menu-toggle{display:inline-flex}.mobile-menu{width:min(100% - 20px,1480px)}.editor-link{display:none}.hero{padding:104px 0 56px}.hero::after{right:-54vw;top:22vh;width:92vw;height:92vw}.hero-grid{gap:34px}.hero-title{font-size:clamp(42px,13vw,68px);line-height:.98;letter-spacing:-.055em}.hero-subtitle{font-size:16px;line-height:1.75;margin-top:18px}.hero-actions{display:grid;grid-template-columns:1fr;gap:12px;margin-top:26px}.btn-primary,.btn-outline{width:100%;min-height:50px;padding:14px 18px}.stats-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:24px}.stat-pill{padding:14px 10px;border-radius:18px}.stat-pill strong{font-size:20px}.stat-pill span{font-size:11px}.hero-frame{aspect-ratio:16/11;border-radius:26px}.status-card{position:relative;left:auto;right:auto;bottom:auto;margin-top:12px;border-radius:20px;padding:14px 16px}.hero-frame .status-card{position:absolute;left:14px;right:14px;bottom:14px;margin-top:0}.eyebrow{font-size:10px;letter-spacing:.14em}.eyebrow::before{width:20px}section{padding:72px 0;scroll-margin-top:92px}.section-head{margin-bottom:32px;text-align:left}.section-title{font-size:clamp(34px,10vw,48px);line-height:1.08;letter-spacing:-.04em}.section-desc{font-size:15px;line-height:1.75}.timeline{gap:14px}.timeline-card{padding:20px;border-radius:22px}.timeline-top{display:block}.timeline-card h3{font-size:20px}.timeline-card .company{font-size:14px}.timeline-card .period{display:inline-flex;margin-top:12px}.timeline-card p{font-size:14px;line-height:1.72}.about-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.about-stat{padding:18px 10px;border-radius:20px}.projects-grid,.skills-grid{grid-template-columns:1fr}.project-card{border-radius:24px}.project-media{aspect-ratio:16/10}.project-body{padding:20px}.project-body h3{font-size:21px}.project-body p{font-size:14px;line-height:1.7;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.skill-card{padding:22px;border-radius:24px}.icon-box{width:48px;height:48px;border-radius:17px;margin-bottom:18px}.contact{padding-bottom:86px}.contact-grid{gap:30px}.contact-copy .section-head,.contact-copy .section-title{text-align:left}.quote-form{padding:20px;border-radius:24px}.field{margin-bottom:14px}.field input,.field select,.field textarea{border-radius:14px;padding:13px 14px;font-size:15px}.footer-row{display:block;text-align:left}.footer-row p+p{margin-top:8px}.reveal{opacity:1;transform:none}}
     @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.reveal{opacity:1!important;transform:none!important}}
@@ -90,7 +97,7 @@
   <div class="noise-overlay"></div>
   <canvas id="webgl-bg" aria-hidden="true"></canvas>
   <div id="app"></div>
-  <a class="editor-link" href="editor.html" target="_blank" rel="noopener">编辑内容</a>
+  <a class="editor-link js-edit-entry" href="editor.html" target="_blank" rel="noopener">编辑</a>
   <script src="content.js"></script>
   <script>
     const C = window.SITE_CONTENT || {};
@@ -104,7 +111,7 @@
       document.getElementById('app').innerHTML = `
         <nav id="navbar" class="nav-shell" aria-label="主导航">
           <div class="nav-inner">
-            <a class="brand" href="#hero" aria-label="返回首页"><span class="brand-mark">BL</span><span class="brand-text">${esc(C.site.logo).replace(/\.$/,'<span class="gradient-text">.</span>')}</span></a>
+            <a class="brand" href="#hero" aria-label="返回首页"><span class="brand-mark${C.site.logoImage ? ' has-logo' : ''}">${C.site.logoImage ? `<img src="${esc(C.site.logoImage)}" alt="${esc(C.site.logoImageAlt || '公司 LOGO')}">` : 'BL'}</span><span class="brand-text">${esc(C.site.logo).replace(/\.$/,'<span class="gradient-text">.</span>')}</span></a>
             <div class="nav-links">
               <a href="#about">${esc(C.nav.about)}</a>
               <a href="#projects">${esc(C.nav.projects)}</a>
@@ -118,7 +125,7 @@
             <a href="#projects">${esc(C.nav.projects)} ${arrowIcon}</a>
             <a href="#skills">${esc(C.nav.skills)} ${arrowIcon}</a>
             <a href="#contact">${esc(C.nav.contact)} ${arrowIcon}</a>
-            <a href="editor.html" target="_blank" rel="noopener">编辑内容 ${arrowIcon}</a>
+            <a class="js-edit-entry" href="editor.html" target="_blank" rel="noopener">编辑 ${arrowIcon}</a>
           </div>
         </nav>
 
@@ -146,7 +153,7 @@
             </div>
           </section>
 
-          <section id="about">
+          <section id="about" class="scroll-stage">
             <div class="container-page about-grid">
               <div class="sticky-copy">
                 <span class="eyebrow reveal">${esc(C.about.eyebrow)}</span>
@@ -164,7 +171,7 @@
             </div>
           </section>
 
-          <section id="projects">
+          <section id="projects" class="scroll-stage">
             <div class="container-page">
               <div class="section-head">
                 <span class="eyebrow reveal">${esc(C.projectsSection.eyebrow)}</span>
@@ -177,7 +184,7 @@
             </div>
           </section>
 
-          <section id="skills">
+          <section id="skills" class="scroll-stage">
             <div class="container-page">
               <div class="section-head">
                 <span class="eyebrow reveal">${esc(C.skillsSection.eyebrow)}</span>
@@ -190,7 +197,7 @@
             </div>
           </section>
 
-          <section id="contact" class="contact">
+          <section id="contact" class="contact scroll-stage">
             <div class="container-page contact-grid">
               <div class="contact-copy">
                 <div class="section-head">
@@ -236,6 +243,23 @@
       }));
     }
 
+    function openEditorWithAuth(e){
+      e?.preventDefault();
+      const target = e?.currentTarget?.getAttribute('href') || 'editor.html';
+      const cached = sessionStorage.getItem('portfolio-cms-entry-ok');
+      let password = cached === '1' ? 'hqd125125' : prompt('请输入管理密码');
+      if(password === 'hqd125125'){
+        sessionStorage.setItem('portfolio-cms-entry-ok','1');
+        window.open(target,'_blank','noopener');
+      }else if(password !== null){
+        alert('密码不正确，无法进入管理界面。');
+      }
+    }
+
+    function initEditorGate(){
+      document.querySelectorAll('.js-edit-entry').forEach(a=>a.addEventListener('click',openEditorWithAuth));
+    }
+
     function initAnimations(){
       const isMobile = window.matchMedia('(max-width: 767px)').matches;
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -247,7 +271,44 @@
       if(reduce || !window.gsap){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});return;}
       gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
       if(isMobile){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});return;}
-      document.querySelectorAll('.reveal').forEach((el,i)=>gsap.to(el,{scrollTrigger:{trigger:el,start:'top 86%',toggleActions:'play none none none'},opacity:1,y:0,duration:.8,ease:'power3.out',delay:Math.min(i*.018,.18)}));
+
+      // Apple-style: simple fade-up reveals, no pin, no scrub, no blur
+      const stDefaults = { start:'top 76%', toggleActions:'play none none none', once:true };
+
+      // Section titles — subtle rise
+      document.querySelectorAll('.section-head .reveal, .sticky-copy .reveal').forEach(el=>{
+        gsap.fromTo(el, { opacity:0, y:28 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.65, ease:'power2.out' });
+      });
+
+      // Timeline cards — rise from below, stagger
+      document.querySelectorAll('.timeline-card').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, y:36 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.55, delay:Math.min(i*.08,.32), ease:'power2.out' });
+      });
+
+      // About stats — pop in
+      document.querySelectorAll('.about-stat').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, y:24, scale:.94 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, scale:1, duration:.5, delay:Math.min(i*.06,.2), ease:'back.out(1.4)' });
+      });
+
+      // Project cards — fade up, stagger
+      document.querySelectorAll('.project-card').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, y:48 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.62, delay:Math.min(i*.09,.36), ease:'power3.out' });
+      });
+
+      // Skill cards — side + fade
+      document.querySelectorAll('.skill-card').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, x:i%2===0?-28:28, y:16 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, x:0, y:0, duration:.52, delay:Math.min(i*.07,.28), ease:'power2.out' });
+      });
+
+      // Contact links/form — simple rise
+      document.querySelectorAll('.contact-link, .quote-form').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.58, delay:Math.min(i*.06,.18), ease:'power2.out' });
+      });
+
+      // Hero elements — staggered fade
+      document.querySelectorAll('.hero .reveal').forEach((el,i)=>gsap.fromTo(el,{opacity:0,y:32},{scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'},opacity:1,y:0,duration:.72,delay:Math.min(i*.05,.25),ease:'power3.out'}));
+
+      // Stat counters
       document.querySelectorAll('.stat-number').forEach(stat=>{const target=parseInt(stat.dataset.count)||0;const suffix=stat.dataset.suffix||'';gsap.fromTo(stat,{innerHTML:0},{scrollTrigger:{trigger:stat,start:'top 82%'},innerHTML:target,duration:1.6,ease:'power2.out',snap:{innerHTML:1},onUpdate(){stat.innerHTML=Math.round(this.targets()[0].innerHTML)+suffix}})});
     }
 
@@ -274,6 +335,7 @@
 
     render();
     initMenu();
+    initEditorGate();
     initWebGL();
     initAnimations();
   </script>
