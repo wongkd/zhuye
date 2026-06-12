@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人站内容编辑器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}body{font-family:'Manrope','Microsoft YaHei',sans-serif;background:#f4f1ec;color:#171717}.card{background:#fff;border:1px solid #e8dfd1;border-radius:22px;box-shadow:0 20px 60px rgba(54,42,25,.08)}.field{display:grid;gap:7px}.field label{font-size:13px;font-weight:800;color:#514739}.field input,.field textarea,.field select{width:100%;border:1px solid #e2d7c7;background:#fffaf4;border-radius:12px;padding:12px 14px;outline:none;transition:.2s}.field input:focus,.field textarea:focus,.field select:focus{border-color:#b88745;box-shadow:0 0 0 4px rgba(184,135,69,.12)}.tab{padding:12px 16px;border-radius:14px;font-weight:800;color:#7b6b57;transition:.2s}.tab.active{background:#171717;color:#fff}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:12px 16px;font-weight:800;transition:.2s}.btn-primary{background:#171717;color:#fff}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.18)}.btn-gold{background:#b88745;color:#fff}.btn-soft{background:#fff;border:1px solid #e2d7c7;color:#171717}.btn-danger{background:#fff0ee;color:#b42318;border:1px solid #ffd1cc}.mini-card{border:1px solid #eadfce;background:#fffaf4;border-radius:18px;padding:16px}.hint{color:#7b6b57;font-size:13px;line-height:1.7}.toast{position:fixed;right:22px;bottom:22px;background:#171717;color:#fff;padding:14px 18px;border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.22);opacity:0;transform:translateY(12px);transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateY(0)}
+  </style>
+</head>
+<body>
+  <div class="max-w-[1500px] mx-auto px-6 py-8">
+    <header class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
+      <div>
+        <div class="text-sm font-extrabold tracking-widest text-[#b88745] uppercase">Portfolio CMS</div>
+        <h1 class="text-4xl md:text-5xl font-extrabold mt-2">个人站内容编辑器</h1>
+        <p class="hint mt-3 max-w-3xl">像填表一样修改网页文字。改完后点击「导出 content.js」，把下载的文件替换当前文件夹里的 <b>content.js</b>，刷新网站即可生效。</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href="index.html" target="_blank" class="btn btn-soft">预览网站</a>
+        <button onclick="saveToLocalFile()" class="btn btn-primary">保存到本地文件</button>
+        <button onclick="saveToCloud()" class="btn btn-gold">同步到 GitHub</button>
+        <button onclick="loadSample()" class="btn btn-soft">恢复默认</button>
+        <button onclick="copyJS()" class="btn btn-gold">复制 content.js</button>
+        <button onclick="downloadJS()" class="btn btn-soft">导出 content.js</button>
+      </div>
+    </header>
+
+    <div class="grid lg:grid-cols-[260px_1fr] gap-6">
+      <aside class="card p-4 h-fit sticky top-6">
+        <nav id="tabs" class="grid gap-2"></nav>
+        <div class="mt-5 p-4 rounded-2xl bg-[#fff8ed] border border-[#ecdcc1]">
+          <div class="font-extrabold mb-2">使用方法</div>
+          <ol class="hint list-decimal ml-4 space-y-1">
+            <li>双击 start-editor.bat 启动</li>
+            <li>打开 http://127.0.0.1:5177/editor.html</li>
+            <li>左侧切换模块，右侧填文字</li>
+            <li>点击「保存到本地文件」</li>
+            <li>刷新 index.html 看效果</li>
+          </ol>
+        </div>
+      </aside>
+
+      <main class="card p-5 md:p-8">
+        <form id="form" class="space-y-8"></form>
+      </main>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script src="content.js"></script>
+  <script>
+    let data = structuredClone(window.SITE_CONTENT);
+    let activeTab = 'site';
+    const tabs = [
+      ['site','网站基础'],['nav','导航'],['hero','首页 Hero'],['about','关于/经历'],['projects','项目作品'],['skills','技能'],['contact','联系/表单'],['json','高级 JSON']
+    ];
+    const $ = s => document.querySelector(s);
+    const toast = msg => { const el=$('#toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),1800); };
+    const esc = v => String(v ?? '').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]));
+    const pathGet = (obj,path) => path.split('.').reduce((o,k)=>o?.[k],obj);
+    const pathSet = (obj,path,val) => { const parts=path.split('.'); let o=obj; parts.slice(0,-1).forEach(k=>o=o[k]); o[parts.at(-1)] = val; saveDraft(); };
+    function field(label,path,type='text',rows=3){ const v=pathGet(data,path) ?? ''; return `<div class="field"><label>${label}</label>${type==='textarea'?`<textarea rows="${rows}" oninput="pathSet(data,'${path}',this.value)">${esc(v)}</textarea>`:`<input value="${esc(v)}" oninput="pathSet(data,'${path}',this.value)">`}</div>`; }
+    function numberField(label,path,suffixPath){ return `<div class="grid md:grid-cols-2 gap-3">${field(label,path)}${field('后缀（如 + / 年）',suffixPath)}</div>`; }
+
+    function renderTabs(){ $('#tabs').innerHTML = tabs.map(([id,name])=>`<button class="tab text-left ${activeTab===id?'active':''}" onclick="activeTab='${id}';renderTabs();renderForm();return false;">${name}</button>`).join(''); }
+    function sectionTitle(t,d=''){ return `<div><h2 class="text-2xl font-extrabold">${t}</h2>${d?`<p class="hint mt-2">${d}</p>`:''}</div>`; }
+
+    function renderForm(){
+      const f = $('#form');
+      if(activeTab==='site') f.innerHTML = sectionTitle('网站基础信息') + `<div class="grid md:grid-cols-2 gap-4">${field('网页标题','site.title')}${field('Logo 文字','site.logo')}${field('页脚左侧','site.footerLeft')}${field('页脚右侧','site.footerRight')}</div>`;
+      if(activeTab==='nav') f.innerHTML = sectionTitle('导航文案') + `<div class="grid md:grid-cols-2 gap-4">${field('关于','nav.about')}${field('作品','nav.projects')}${field('能力','nav.skills')}${field('联系我','nav.contact')}</div>`;
+      if(activeTab==='hero') f.innerHTML = sectionTitle('首页 Hero','这里是第一屏，最影响个人站气质。') + `<div class="grid md:grid-cols-2 gap-4">${field('小标签','hero.eyebrow')}${field('高亮标题','hero.titleHighlight')}${field('主标题','hero.titleMain')}${field('主按钮','hero.primaryButton')}${field('副按钮','hero.secondaryButton')}${field('个人图片 URL','hero.image')}${field('图片 Alt','hero.imageAlt')}${field('状态标签','hero.statusLabel')}${field('状态文字','hero.statusText')}<div class="md:col-span-2">${field('简介文案','hero.subtitle','textarea',4)}</div></div>` + renderHeroStats();
+      if(activeTab==='about') f.innerHTML = sectionTitle('关于我 / 经历') + `<div class="grid md:grid-cols-2 gap-4">${field('小标签','about.eyebrow')}${field('标题上半句','about.titleTop')}${field('标题高亮','about.titleHighlight')}<div class="md:col-span-2">${field('介绍文案','about.description','textarea',4)}</div></div>` + renderExperiences() + renderAboutStats();
+      if(activeTab==='projects') f.innerHTML = sectionTitle('项目作品') + `<div class="grid md:grid-cols-2 gap-4">${field('模块小标签','projectsSection.eyebrow')}${field('标题前缀','projectsSection.titlePrefix')}${field('标题高亮','projectsSection.titleHighlight')}<div class="md:col-span-2">${field('模块描述','projectsSection.description','textarea',3)}</div></div>` + renderProjects();
+      if(activeTab==='skills') {
+        data.skillGroups.forEach(g => g.itemsText = (g.items || []).join(', '));
+        f.innerHTML = sectionTitle('技能展示') + `<div class="grid md:grid-cols-2 gap-4">${field('模块小标签','skillsSection.eyebrow')}${field('标题前缀','skillsSection.titlePrefix')}${field('标题高亮','skillsSection.titleHighlight')}<div class="md:col-span-2">${field('模块描述','skillsSection.description','textarea',3)}</div></div>` + renderSkills();
+      }
+      if(activeTab==='contact') {
+        data.contact.form.typeOptionsText = (data.contact.form.typeOptions || []).join(', ');
+        f.innerHTML = sectionTitle('联系与表单') + `<div class="grid md:grid-cols-2 gap-4">${field('小标签','contact.eyebrow')}${field('标题上半句','contact.titleTop')}${field('标题高亮','contact.titleHighlight')}${field('邮箱','contact.email')}<div class="md:col-span-2">${field('描述','contact.description','textarea',3)}</div></div>` + renderLinks() + renderFormTexts();
+      }
+      if(activeTab==='json') f.innerHTML = sectionTitle('高级 JSON 编辑','适合批量修改。注意 JSON 格式必须正确。') + `<textarea id="jsonBox" rows="28" class="w-full font-mono text-sm border border-[#e2d7c7] bg-[#fffaf4] rounded-2xl p-4">${esc(JSON.stringify(data,null,2))}</textarea><div class="flex gap-3"><button class="btn btn-primary" onclick="applyJSON();return false;">应用 JSON</button><button class="btn btn-soft" onclick="renderForm();return false;">重置文本框</button></div>`;
+    }
+
+    function renderHeroStats(){ return `<div><h3 class="font-extrabold text-xl mb-3">Hero 统计数字</h3><div class="grid md:grid-cols-3 gap-4">${data.hero.stats.map((s,i)=>`<div class="mini-card space-y-3">${field('数字',`hero.stats.${i}.value`)}${field('说明',`hero.stats.${i}.label`)}</div>`).join('')}</div></div>`; }
+    function renderExperiences(){ return `<div><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-xl">经历卡片</h3><button class="btn btn-soft" onclick="data.about.experiences.push({role:'新职位',company:'公司名称',period:'时间',description:'经历描述'});saveDraft();renderForm();return false;">新增经历</button></div><div class="space-y-4">${data.about.experiences.map((e,i)=>`<div class="mini-card"><div class="flex justify-between gap-3 mb-4"><b>经历 ${i+1}</b><button class="btn btn-danger py-2 px-3" onclick="data.about.experiences.splice(${i},1);saveDraft();renderForm();return false;">删除</button></div><div class="grid md:grid-cols-2 gap-4">${field('职位',`about.experiences.${i}.role`)}${field('公司',`about.experiences.${i}.company`)}${field('时间',`about.experiences.${i}.period`)}<div></div><div class="md:col-span-2">${field('描述',`about.experiences.${i}.description`,'textarea',3)}</div></div></div>`).join('')}</div></div>`; }
+    function renderAboutStats(){ return `<div><h3 class="font-extrabold text-xl mb-3">关于页统计数字</h3><div class="grid md:grid-cols-4 gap-4">${data.about.stats.map((s,i)=>`<div class="mini-card space-y-3">${numberField('数字',`about.stats.${i}.value`,`about.stats.${i}.suffix`)}${field('说明',`about.stats.${i}.label`)}</div>`).join('')}</div></div>`; }
+    function renderProjects(){ return `<div><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-xl">项目列表</h3><button class="btn btn-soft" onclick="data.projects.push({title:'新项目',category:'分类',year:'2024',description:'项目描述',image:'',link:'#'});saveDraft();renderForm();return false;">新增项目</button></div><div class="space-y-4">${data.projects.map((p,i)=>`<div class="mini-card"><div class="flex justify-between gap-3 mb-4"><b>项目 ${i+1}</b><button class="btn btn-danger py-2 px-3" onclick="data.projects.splice(${i},1);saveDraft();renderForm();return false;">删除</button></div><div class="grid md:grid-cols-2 gap-4">${field('项目标题',`projects.${i}.title`)}${field('分类',`projects.${i}.category`)}${field('年份',`projects.${i}.year`)}${field('详情链接',`projects.${i}.link`)}<div class="md:col-span-2">${field('图片 URL',`projects.${i}.image`)}</div><div class="md:col-span-2">${field('项目描述',`projects.${i}.description`,'textarea',3)}</div></div></div>`).join('')}</div></div>`; }
+    function renderSkills(){ return `<div><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-xl">技能分组</h3><button class="btn btn-soft" onclick="data.skillGroups.push({title:'新技能组',color:'indigo',items:['技能1','技能2'],itemsText:'技能1, 技能2'});saveDraft();renderForm();return false;">新增分组</button></div><div class="space-y-4">${data.skillGroups.map((g,i)=>`<div class="mini-card"><div class="flex justify-between gap-3 mb-4"><b>技能组 ${i+1}</b><button class="btn btn-danger py-2 px-3" onclick="data.skillGroups.splice(${i},1);saveDraft();renderForm();return false;">删除</button></div><div class="grid md:grid-cols-2 gap-4">${field('分组标题',`skillGroups.${i}.title`)}${field('标签列表（用英文逗号分隔）',`skillGroups.${i}.itemsText`)}</div><button class="btn btn-soft mt-4" onclick="data.skillGroups[${i}].items = (data.skillGroups[${i}].itemsText||'').split(',').map(x=>x.trim()).filter(Boolean);saveDraft();toast('技能标签已更新');return false;">应用标签列表</button></div>`).join('')}</div></div>`; }
+    function renderLinks(){ return `<div><div class="flex items-center justify-between mb-3"><h3 class="font-extrabold text-xl">社交链接</h3><button class="btn btn-soft" onclick="data.contact.links.push({label:'新链接',url:'#'});saveDraft();renderForm();return false;">新增链接</button></div><div class="grid md:grid-cols-3 gap-4">${data.contact.links.map((l,i)=>`<div class="mini-card space-y-3">${field('名称',`contact.links.${i}.label`)}${field('链接',`contact.links.${i}.url`)}<button class="btn btn-danger w-full" onclick="data.contact.links.splice(${i},1);saveDraft();renderForm();return false;">删除</button></div>`).join('')}</div></div>`; }
+    function renderFormTexts(){ return `<div><h3 class="font-extrabold text-xl mb-3">表单文字</h3><div class="grid md:grid-cols-2 gap-4">${field('姓名标签','contact.form.nameLabel')}${field('姓名占位','contact.form.namePlaceholder')}${field('邮箱标签','contact.form.emailLabel')}${field('邮箱占位','contact.form.emailPlaceholder')}${field('项目类型标签','contact.form.typeLabel')}${field('项目类型占位','contact.form.typePlaceholder')}${field('项目描述标签','contact.form.messageLabel')}${field('项目描述占位','contact.form.messagePlaceholder')}${field('按钮文字','contact.form.submitText')}${field('提交成功提示','contact.form.successMessage')}<div class="md:col-span-2">${field('项目类型选项（英文逗号分隔）','contact.form.typeOptionsText')}</div></div><button class="btn btn-soft mt-4" onclick="data.contact.form.typeOptions=(data.contact.form.typeOptionsText||'').split(',').map(x=>x.trim()).filter(Boolean);saveDraft();toast('项目类型选项已更新');return false;">应用选项</button></div>`; }
+
+    function getCleanData(){ const clean=structuredClone(data); clean.skillGroups.forEach(g=>delete g.itemsText); delete clean.contact.form.typeOptionsText; return clean; }
+    function toJS(){ return 'window.SITE_CONTENT = ' + JSON.stringify(getCleanData(),null,2) + ';\n'; }
+    async function saveToLocalFile(){
+      try{
+        const res = await fetch('/api/save-content', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({content:getCleanData()})});
+        const result = await res.json();
+        if(!result.ok) throw new Error(result.error || '保存失败');
+        toast('已保存到 content.js，并自动备份旧文件');
+      }catch(error){
+        alert('自动保存失败：请确认你是通过 start-editor.bat 启动，并用 http://127.0.0.1:5177/editor.html 打开的。\n\n错误：' + error.message);
+      }
+    }
+    async function saveToCloud(){
+      const endpoint = localStorage.getItem('portfolio-cms-endpoint') || prompt('请输入 Cloudflare Worker 保存接口地址，例如：https://zhuye-portfolio-cms.xxx.workers.dev/api/save-content');
+      if(!endpoint) return;
+      localStorage.setItem('portfolio-cms-endpoint', endpoint);
+      const password = sessionStorage.getItem('portfolio-cms-password') || prompt('请输入 CMS 保存密码');
+      if(!password) return;
+      sessionStorage.setItem('portfolio-cms-password', password);
+      try{
+        const res = await fetch(endpoint, {method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+password}, body:JSON.stringify({content:getCleanData(), message:'Update zhuye content from visual editor'})});
+        const result = await res.json();
+        if(!result.ok) throw new Error(result.error || JSON.stringify(result.detail || result));
+        toast('已同步到 GitHub，等待自动部署');
+        if(result.commit) console.log('GitHub commit:', result.commit);
+      }catch(error){
+        alert('同步 GitHub 失败：' + error.message);
+      }
+    }
+    function downloadJS(){ const blob=new Blob([toJS()],{type:'text/javascript;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='content.js'; a.click(); URL.revokeObjectURL(a.href); toast('已导出 content.js'); }
+    async function copyJS(){ await navigator.clipboard.writeText(toJS()); toast('已复制 content.js 内容'); }
+    function applyJSON(){ try{ data=JSON.parse($('#jsonBox').value); saveDraft(); toast('JSON 已应用'); activeTab='site'; renderTabs(); renderForm(); }catch(e){ alert('JSON 格式错误：' + e.message); } }
+    function saveDraft(){ localStorage.setItem('portfolio-content-draft', JSON.stringify(data)); }
+    function loadSample(){ if(!confirm('确定恢复为 content.js 当前默认内容？本地草稿会被覆盖。')) return; data=structuredClone(window.SITE_CONTENT); saveDraft(); renderForm(); toast('已恢复默认'); }
+    function init(){ const draft=localStorage.getItem('portfolio-content-draft'); if(draft && confirm('检测到上次编辑草稿，要继续使用吗？')){ try{data=JSON.parse(draft)}catch{} } renderTabs(); renderForm(); }
+    init();
+  </script>
+</body>
+</html>

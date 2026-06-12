@@ -1,0 +1,7 @@
+content.backup.*.js
+.DS_Store
+Thumbs.db
+node_modules/
+.env
+.env.*
+.wrangler/

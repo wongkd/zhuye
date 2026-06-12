@@ -1,0 +1,14 @@
+name = "zhuye-portfolio-cms"
+main = "cloudflare-worker.js"
+compatibility_date = "2026-06-12"
+
+[vars]
+GITHUB_OWNER = "wongkd"
+GITHUB_REPO = "zhuye"
+GITHUB_BRANCH = "main"
+GITHUB_CONTENT_PATH = "content.js"
+ALLOWED_ORIGIN = "https://zhuye.huangqidong.cn"
+
+# 敏感变量不要写在这里，用命令设置：
+# npx wrangler secret put GITHUB_TOKEN
+# npx wrangler secret put CMS_PASSWORD
