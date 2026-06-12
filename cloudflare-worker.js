@@ -23,10 +23,8 @@ export default {
     let targetPath = url.pathname;
     if (targetPath === "/" || targetPath === "") targetPath = "/index.html";
 
-    const cacheBust = url.searchParams.get("v") || "0.9.1";
     const targetUrl = new URL(SOURCE + targetPath);
     for (const [key, value] of url.searchParams) targetUrl.searchParams.set(key, value);
-    targetUrl.searchParams.set("v", cacheBust);
 
     try {
       const upstream = await fetch(targetUrl.toString(), {
@@ -46,7 +44,7 @@ export default {
       }
       
       responseHeaders.set("X-Powered-By", "Cloudflare Worker Proxy");
-      responseHeaders.set("X-BLRY-Version", "0.9.1-debug-mobile-cache");
+      responseHeaders.set("X-BLRY-Version", "0.9");
       responseHeaders.set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
       responseHeaders.set("Pragma", "no-cache");
       responseHeaders.set("Expires", "0");
