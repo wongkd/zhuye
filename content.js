@@ -200,22 +200,22 @@ window.SITE_CONTENT = {
     ],
     "form": {
       "nameLabel": "称呼",
-      "namePlaceholder": "例如：黄先生 / 陈女士",
+      "namePlaceholder": "例如：x先生 / x女士",
       "emailLabel": "邮箱",
-      "emailPlaceholder": "用于接收方案反馈的邮箱地址",
+      "emailPlaceholder": "与您联系的邮箱地址",
       "typeLabel": "需求类型",
-      "typePlaceholder": "选择需求类型",
+      "typePlaceholder": "装修风格类型",
       "typeOptions": [
         "新房装修",
         "旧房改造",
-        "局部翻新",
-        "智能家居",
+        "别墅建造",
+        "店铺装修",
         "预算咨询"
       ],
       "messageLabel": "房屋与需求描述",
       "messagePlaceholder": "例如：湛江，建面120㎡，三房两厅，想做现代简约，预算约20万...",
       "submitText": "提交预算需求",
-      "successMessage": "需求已记录。建议同步通过邮箱或微信发送详细资料，方便更快估算。"
+      "successMessage": "需求已记录。建议通过上方“联系我们”通过微信、抖音、小红书等方式更快回复"
     }
   }
 };
