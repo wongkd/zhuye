@@ -1,9 +1,16 @@
 (()=>{
-      const mq = window.matchMedia;
-      if(mq) {
-        if(mq('(prefers-color-scheme: dark)').matches) { document.documentElement.dataset.theme = 'dark'; return; }
-        if(mq('(prefers-color-scheme: light)').matches) { document.documentElement.dataset.theme = 'light'; return; }
-      }
-      const hour = new Date().getHours();
-      document.documentElement.dataset.theme = (hour >= 6 && hour < 18) ? 'light' : 'dark';
+      const key = 'blry-theme-mode';
+      const saved = localStorage.getItem(key);
+      const mode = ['light','dark','system'].includes(saved) ? saved : 'system';
+      const resolveSystem = () => {
+        const mq = window.matchMedia;
+        if(mq) {
+          if(mq('(prefers-color-scheme: dark)').matches) return 'dark';
+          if(mq('(prefers-color-scheme: light)').matches) return 'light';
+        }
+        const hour = new Date().getHours();
+        return (hour >= 6 && hour < 18) ? 'light' : 'dark';
+      };
+      document.documentElement.dataset.themeMode = mode;
+      document.documentElement.dataset.theme = mode === 'system' ? resolveSystem() : mode;
     })();

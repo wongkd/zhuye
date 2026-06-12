@@ -15,12 +15,20 @@ const C = window.SITE_CONTENT || {};
               <a href="#projects">${esc(C.nav.projects)}</a>
               <a href="#skills">${esc(C.nav.skills)}</a>
               <a href="#contact">${esc(C.nav.contact)}</a>
+              <button class="theme-toggle js-theme-toggle" type="button" aria-label="切换浅色、深色或系统主题">
+                <span class="theme-toggle-icon" aria-hidden="true"></span>
+                <span class="theme-toggle-label">当前主题：系统</span>
+              </button>
               <button class="nav-login js-login-entry" type="button" aria-label="登录管理后台">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 登录
               </button>
             </div>
             <div class="nav-actions">
+              <button class="theme-toggle js-theme-toggle mobile-theme-toggle" type="button" aria-label="切换浅色、深色或系统主题">
+                <span class="theme-toggle-icon" aria-hidden="true"></span>
+                <span class="theme-toggle-label">当前主题：系统</span>
+              </button>
               <button id="menuToggle" class="menu-toggle" type="button" aria-controls="mobileMenu" aria-expanded="false">菜单</button>
             </div>
           </div>
@@ -144,7 +152,9 @@ const C = window.SITE_CONTENT || {};
         </footer>`;
     }
 
-    function detectTheme(){
+    const THEME_STORAGE_KEY = 'blry-theme-mode';
+
+    function systemTheme(){
       if(window.matchMedia){
         if(window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
         if(window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
@@ -153,20 +163,44 @@ const C = window.SITE_CONTENT || {};
       return (hour >= 6 && hour < 18) ? 'light' : 'dark';
     }
 
-    function applyTheme(theme){
-      document.documentElement.dataset.theme = theme;
+    function getThemeMode(){
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      return ['light','dark','system'].includes(saved) ? saved : 'system';
+    }
+
+    function resolveTheme(mode = getThemeMode()){
+      return mode === 'system' ? systemTheme() : mode;
+    }
+
+    function applyTheme(mode = getThemeMode()){
+      const resolved = resolveTheme(mode);
+      document.documentElement.dataset.themeMode = mode;
+      document.documentElement.dataset.theme = resolved;
       const meta = document.querySelector('meta[name="theme-color"]');
-      if(meta) meta.setAttribute('content', theme === 'dark' ? '#0b0b0f' : '#f5f5f7');
+      if(meta) meta.setAttribute('content', resolved === 'dark' ? '#0b0b0f' : '#f5f5f7');
+      document.querySelectorAll('.js-theme-toggle').forEach(btn=>{
+        btn.setAttribute('aria-pressed', mode !== 'system' ? 'true' : 'false');
+        btn.setAttribute('data-mode', mode);
+        const label = mode === 'light' ? '浅色' : mode === 'dark' ? '深色' : '系统';
+        const sr = btn.querySelector('.theme-toggle-label');
+        if(sr) sr.textContent = `当前主题：${label}`;
+      });
+    }
+
+    function cycleTheme(){
+      const modes = ['system','light','dark'];
+      const current = getThemeMode();
+      const next = modes[(modes.indexOf(current) + 1) % modes.length] || 'system';
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+      applyTheme(next);
     }
 
     function initTheme(){
-      applyTheme(detectTheme());
-      window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{
-        applyTheme(detectTheme());
-      });
-      window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change',()=>{
-        applyTheme(detectTheme());
-      });
+      applyTheme(getThemeMode());
+      document.querySelectorAll('.js-theme-toggle').forEach(btn=>btn.addEventListener('click',cycleTheme));
+      const onSystemChange = () => { if(getThemeMode() === 'system') applyTheme('system'); };
+      window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener?.('change',onSystemChange);
+      window.matchMedia?.('(prefers-color-scheme: light)').addEventListener?.('change',onSystemChange);
     }
 
     function initMenu(){
@@ -328,7 +362,7 @@ const C = window.SITE_CONTENT || {};
       const unique = nodes => Array.from(new Set(Array.from(nodes).filter(Boolean)));
       const setStagger = (nodes, step = 1) => unique(nodes).forEach((el,i)=>el.style.setProperty('--stagger-index', String(i * step)));
       const bindPressFeedback = () => {
-        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .btn-primary, .btn-outline, .menu-toggle')).forEach(el=>{
+        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
           const down = () => el.classList.add('is-pressed');
           const up = () => el.classList.remove('is-pressed');
           el.addEventListener('pointerdown', down, { passive:true });
