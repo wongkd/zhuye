@@ -17,6 +17,14 @@ export default {
       return handleSave(request, env, origin);
     }
 
+    if (url.pathname === "/api/history" && request.method === "GET") {
+      return handleHistory(request, env, origin, url);
+    }
+
+    if (url.pathname === "/api/rollback" && request.method === "POST") {
+      return handleRollback(request, env, origin);
+    }
+
     // --- Website proxy: serve directly from GitHub raw files ---
     // Avoid GitHub Pages custom-domain redirects and mobile/proxy caches that can keep stale HTML.
     const SOURCE = "https://raw.githubusercontent.com/wongkd/zhuye/main";
@@ -65,10 +73,28 @@ export default {
   }
 };
 
-async function handleSave(request, env, origin) {
+function isAuthorized(request, env) {
   const authHeader = request.headers.get("Authorization") || "";
   const expected = `Bearer ${env.CMS_PASSWORD}`;
-  if (!env.CMS_PASSWORD || authHeader !== expected) {
+  return Boolean(env.CMS_PASSWORD && authHeader === expected);
+}
+
+function githubConfig(env) {
+  return {
+    owner: env.GITHUB_OWNER,
+    repo: env.GITHUB_REPO,
+    branch: env.GITHUB_BRANCH || "main",
+    filePath: env.GITHUB_CONTENT_PATH || "content.js",
+    token: env.GITHUB_TOKEN
+  };
+}
+
+function missingGithubConfig(config) {
+  return !config.owner || !config.repo || !config.token;
+}
+
+async function handleSave(request, env, origin) {
+  if (!isAuthorized(request, env)) {
     return json({ ok: false, error: "Unauthorized" }, 401, env, origin);
   }
 
@@ -81,13 +107,9 @@ async function handleSave(request, env, origin) {
   const validation = validateContent(content);
   if (!validation.ok) return json(validation, 400, env, origin);
 
-  const owner = env.GITHUB_OWNER;
-  const repo = env.GITHUB_REPO;
-  const branch = env.GITHUB_BRANCH || "main";
-  const filePath = env.GITHUB_CONTENT_PATH || "content.js";
-  const token = env.GITHUB_TOKEN;
+  const { owner, repo, branch, filePath, token } = githubConfig(env);
 
-  if (!owner || !repo || !token) {
+  if (missingGithubConfig({ owner, repo, token })) {
     return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env, origin);
   }
 
@@ -126,6 +148,98 @@ async function handleSave(request, env, origin) {
   return json({
     ok: true,
     message: "已同步到 GitHub，GitHub Pages 自动部署中",
+    commit: result.commit?.html_url,
+    path: filePath,
+    branch
+  }, 200, env, origin);
+}
+
+async function handleHistory(request, env, origin, url) {
+  if (!isAuthorized(request, env)) {
+    return json({ ok: false, error: "Unauthorized" }, 401, env, origin);
+  }
+
+  const { owner, repo, branch, filePath, token } = githubConfig(env);
+  if (missingGithubConfig({ owner, repo, token })) {
+    return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env, origin);
+  }
+
+  const perPage = Math.max(1, Math.min(20, Number(url.searchParams.get("limit") || 10)));
+  const commitsUrl = `https://api.github.com/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branch)}&path=${encodeURIComponentPath(filePath)}&per_page=${perPage}`;
+  const resp = await fetch(commitsUrl, { headers: githubHeaders(token) });
+  const result = await resp.json().catch(() => ({}));
+  if (!resp.ok) {
+    return json({ ok: false, error: "读取 GitHub 版本历史失败", detail: result }, resp.status, env, origin);
+  }
+
+  return json({
+    ok: true,
+    path: filePath,
+    branch,
+    versions: result.map(commit => ({
+      sha: commit.sha,
+      shortSha: commit.sha.slice(0, 7),
+      message: commit.commit?.message || "无提交说明",
+      author: commit.commit?.author?.name || commit.author?.login || "unknown",
+      date: commit.commit?.author?.date || commit.commit?.committer?.date,
+      url: commit.html_url
+    }))
+  }, 200, env, origin);
+}
+
+async function handleRollback(request, env, origin) {
+  if (!isAuthorized(request, env)) {
+    return json({ ok: false, error: "Unauthorized" }, 401, env, origin);
+  }
+
+  let body;
+  try { body = await request.json(); } catch (error) {
+    return json({ ok: false, error: "JSON 格式错误" }, 400, env, origin);
+  }
+
+  const targetSha = String(body.sha || "").trim();
+  if (!/^[0-9a-f]{7,40}$/i.test(targetSha)) {
+    return json({ ok: false, error: "缺少有效的回退版本 SHA" }, 400, env, origin);
+  }
+
+  const { owner, repo, branch, filePath, token } = githubConfig(env);
+  if (missingGithubConfig({ owner, repo, token })) {
+    return json({ ok: false, error: "Worker 环境变量未配置完整" }, 500, env, origin);
+  }
+
+  const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponentPath(filePath)}`;
+  const targetResp = await fetch(`${apiBase}?ref=${encodeURIComponent(targetSha)}`, { headers: githubHeaders(token) });
+  const targetFile = await targetResp.json().catch(() => ({}));
+  if (!targetResp.ok || !targetFile.content) {
+    return json({ ok: false, error: "读取目标版本 content.js 失败", detail: targetFile }, targetResp.status, env, origin);
+  }
+
+  const currentResp = await fetch(`${apiBase}?ref=${encodeURIComponent(branch)}`, { headers: githubHeaders(token) });
+  const currentFile = await currentResp.json().catch(() => ({}));
+  if (!currentResp.ok || !currentFile.sha) {
+    return json({ ok: false, error: "读取当前 content.js 失败", detail: currentFile }, currentResp.status, env, origin);
+  }
+
+  const message = body.message || `Rollback content.js to ${targetSha.slice(0, 7)} ${new Date().toISOString()}`;
+  const updateResp = await fetch(apiBase, {
+    method: "PUT",
+    headers: githubHeaders(token),
+    body: JSON.stringify({
+      message,
+      content: String(targetFile.content).replace(/\n/g, ""),
+      branch,
+      sha: currentFile.sha
+    })
+  });
+  const result = await updateResp.json().catch(() => ({}));
+  if (!updateResp.ok) {
+    return json({ ok: false, error: "回退写入 GitHub 失败", detail: result }, updateResp.status, env, origin);
+  }
+
+  return json({
+    ok: true,
+    message: `已回退 content.js 到 ${targetSha.slice(0, 7)}，GitHub Pages 自动部署中`,
+    rollbackTo: targetSha,
     commit: result.commit?.html_url,
     path: filePath,
     branch
