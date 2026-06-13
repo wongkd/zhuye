@@ -188,7 +188,7 @@ window.SITE_CONTENT = {
     "email": "563838884@qq.com",
     "channels": [
       {
-        "name": "微信咨询",
+        "name": "微信",
         "label": "优先推荐",
         "description": "扫码添加微信，发送户型图、面积和预算诉求，沟通更直接。",
         "image": "assets/images/contact/wechat-qr-clean.png",
@@ -205,7 +205,7 @@ window.SITE_CONTENT = {
       },
       {
         "name": "小红书主页",
-        "label": "待上传",
+        "label": "",
         "description": "后续用于展示案例笔记、装修灵感和材料搭配参考。",
         "image": "",
         "imageAlt": "小红书主页二维码占位",
