@@ -191,7 +191,7 @@ window.SITE_CONTENT = {
         "name": "微信咨询",
         "label": "优先推荐",
         "description": "扫码添加微信，发送户型图、面积和预算诉求，沟通更直接。",
-        "image": "assets/images/contact/wechat-qr.png",
+        "image": "assets/images/contact/wechat-qr-clean.png",
         "imageAlt": "微信咨询二维码",
         "url": "#contact"
       },
@@ -199,7 +199,7 @@ window.SITE_CONTENT = {
         "name": "抖音主页",
         "label": "现场视频",
         "description": "查看施工现场、工艺细节与装修避坑内容。",
-        "image": "assets/images/contact/douyin-qr.png",
+        "image": "assets/images/contact/douyin-qr-clean.png",
         "imageAlt": "抖音主页二维码",
         "url": "#contact"
       },

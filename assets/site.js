@@ -10,6 +10,12 @@ const C = window.SITE_CONTENT || {};
       return `<article class="qr-card${compact ? ' compact' : ''}"><div class="qr-image">${image}</div><div class="qr-info"><div class="qr-label">${esc(ch.label || '扫码了解')}</div><h3>${esc(ch.name || '联系渠道')}</h3><p>${esc(ch.description || '')}</p></div></article>`;
     }
 
+    function renderChannelBookmark(ch, index=0){
+      const image = ch.image ? `<img src="${esc(ch.image)}" alt="${esc(ch.imageAlt || ch.name)}" loading="lazy">` : `<div class="qr-placeholder"><span>${esc((ch.name || 'QR').slice(0,3))}</span><small>后台上传</small></div>`;
+      const order = String(index + 1).padStart(2,'0');
+      return `<article class="qr-bookmark" style="--qr-index:${index}" aria-label="${esc(ch.name || '联系渠道')}"><div class="qr-bookmark-top"><span class="qr-bookmark-order">${order}</span><span class="qr-label">${esc(ch.label || '扫码了解')}</span></div><div class="qr-bookmark-image">${image}</div><div class="qr-bookmark-info"><h3>${esc(ch.name || '联系渠道')}</h3><p>${esc(ch.description || '')}</p></div></article>`;
+    }
+
     function renderNavContact(){
       const channels = C.contact?.channels || [];
       if(!channels.length) return `<a href="#contact">${esc(C.nav.contact)}</a>`;
@@ -148,8 +154,8 @@ const C = window.SITE_CONTENT || {};
                 <div class="contact-links reveal">
                   ${(C.contact.links||[]).map(l=>`<a class="contact-link" href="${esc(l.url||'#contact')}"><span class="contact-icon">${contactIcon}</span><span>${esc(l.label)}</span>${arrowIcon}</a>`).join('')}
                 </div>
-                <div class="contact-channel-board reveal" aria-label="扫码联系与关注">
-                  ${(C.contact.channels||[]).map(ch=>renderChannelCard(ch)).join('')}
+                <div class="contact-channel-board qr-fan-board reveal" aria-label="扫码联系与关注">
+                  ${(C.contact.channels||[]).map((ch,index)=>renderChannelBookmark(ch,index)).join('')}
                 </div>
               </div>
               <form class="glass-card quote-form reveal" novalidate>
@@ -380,7 +386,7 @@ const C = window.SITE_CONTENT || {};
       const unique = nodes => Array.from(new Set(Array.from(nodes).filter(Boolean)));
       const setStagger = (nodes, step = 1) => unique(nodes).forEach((el,i)=>el.style.setProperty('--stagger-index', String(i * step)));
       const bindPressFeedback = () => {
-        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .qr-card, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
+        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .qr-card, .qr-bookmark, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
           const down = () => el.classList.add('is-pressed');
           const up = () => el.classList.remove('is-pressed');
           el.addEventListener('pointerdown', down, { passive:true });
@@ -400,7 +406,7 @@ const C = window.SITE_CONTENT || {};
       window.setTimeout(ready, 520);
       initContactForm();
       document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href')); if(t){e.preventDefault(); runTransitionPulse(); if(window.gsap && !reduce && !isMobile){gsap.to(window,{duration:.72,scrollTo:{y:t,offsetY:96},ease:'power3.out'})}else{t.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}}}));
-      if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});ready();return;}
+      if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});document.querySelectorAll('.qr-fan-board').forEach(el=>el.classList.add('is-open'));ready();return;}
       if(isMobile){
         if(window.ScrollTrigger){ ScrollTrigger.getAll().forEach(st=>st.kill()); }
         const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .quote-form'));
@@ -410,6 +416,7 @@ const C = window.SITE_CONTENT || {};
         });
         const show = el => {
           el.classList.add('is-visible');
+          if(el.classList.contains('qr-fan-board')) el.classList.add('is-open');
           window.setTimeout(()=>{ el.style.transitionDelay = ''; }, 760);
         };
         const showSectionGroup = target => {
@@ -457,7 +464,7 @@ const C = window.SITE_CONTENT || {};
         document.querySelectorAll('.stat-number').forEach(stat=>statObserver.observe(stat));
         return;
       }
-      if(!window.gsap){document.querySelectorAll('.reveal').forEach(el=>el.classList.add('is-visible'));return;}
+      if(!window.gsap){document.querySelectorAll('.reveal').forEach(el=>el.classList.add('is-visible'));document.querySelectorAll('.qr-fan-board').forEach(el=>el.classList.add('is-open'));return;}
       gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
       // Apple-style: simple fade-up reveals, no pin, no scrub, no blur
@@ -488,9 +495,9 @@ const C = window.SITE_CONTENT || {};
         gsap.fromTo(el, { opacity:0, x:i%2===0?-26:26, y:16 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, x:0, y:0, duration:.58, delay:Math.min(i*.07,.28), ease:'power3.out' });
       });
 
-      // Contact form — simple rise
+      // Contact form — simple rise, QR fan opens after the board is revealed
       document.querySelectorAll('.contact-channel-board, .quote-form').forEach((el,i)=>{
-        gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.6, delay:Math.min(i*.06,.18), ease:'power3.out' });
+        gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.6, delay:Math.min(i*.06,.18), ease:'power3.out', onComplete(){ if(el.classList.contains('qr-fan-board')) el.classList.add('is-open'); } });
       });
 
       // Hero elements — staged page load moment
