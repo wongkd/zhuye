@@ -14,16 +14,19 @@ const C = window.SITE_CONTENT || {};
       const name = ch.name || '联系渠道';
       const type = name.includes('微信') ? 'wechat' : name.includes('抖音') ? 'douyin' : 'rednote';
       const logos = {
-        wechat:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4C5.15 4 2 6.68 2 9.98c0 1.78.93 3.38 2.4 4.47l-.34 1.22 1.5-.84c1.06.46 2.3.72 3.64.72.25 0 .49-.01.73-.03-.13-.43-.2-.88-.2-1.34 0-2.98 2.86-5.4 6.39-5.4.15 0 .3 0 .45.02C15.95 6.07 12.9 4 9.2 4Zm-2.25 4.9a.78.78 0 1 1 0-1.56.78.78 0 0 1 0 1.56Zm4.5 0a.78.78 0 1 1 0-1.56.78.78 0 0 1 0 1.56Zm4.85 1.05c-2.93 0-5.3 1.95-5.3 4.35s2.37 4.35 5.3 4.35c.86 0 1.68-.17 2.4-.48l1.25.7-.28-1.02C20.9 17.05 21.6 15.8 21.6 14.3c0-2.4-2.37-4.35-5.3-4.35Zm-1.7 3.52a.62.62 0 1 1 0-1.24.62.62 0 0 1 0 1.24Zm3.4 0a.62.62 0 1 1 0-1.24.62.62 0 0 1 0 1.24Z"/></svg>`,
-        douyin:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 1.9c.35 3.02 2.04 4.82 5 5.02v3.42a8.8 8.8 0 0 1-5.05-1.54v6.57c0 3.32-2.7 6.02-6.02 6.02a6.02 6.02 0 0 1-1.2-11.92v3.55a2.62 2.62 0 1 0 3.33 2.52V1.9h3.94Z"/></svg>`,
-        rednote:`<img src="assets/images/contact/rednote-logo.png" alt="小红书" loading="lazy">`
+        wechat:`<img src="assets/images/contact/logo-wechat-app.png" alt="微信" loading="lazy">`,
+        douyin:`<img src="assets/images/contact/logo-douyin-app.png" alt="抖音" loading="lazy">`,
+        rednote:`<img src="assets/images/contact/logo-rednote-app.png" alt="小红书" loading="lazy">`
       };
+      const copy = {
+        wechat:{title:'微信咨询',lines:['发送户型图、面积、预算诉求'],hint:'点击复制微信号'},
+        douyin:{title:'抖音主页',lines:['施工现场 / 装修避坑'],hint:'点击跳转主页'},
+        rednote:{title:'小红书主页',lines:['案例笔记待补充'],hint:'链接待补充'}
+      }[type];
       const actionType = type === 'wechat' ? 'copy' : type === 'douyin' ? 'link' : 'pending';
-      const hint = actionType === 'copy' ? '点击卡片复制微信号' : actionType === 'link' ? '点击卡片打开主页' : '链接待补充';
-      const label = type === 'wechat' ? '' : ch.label;
-      const desc = type === 'wechat' ? '发送户型图 / 面积 / 预算' : type === 'douyin' ? '查看施工现场和避坑内容' : '链接待补，后续看案例笔记';
-      const inner = `<div class="qr-bookmark-top"><span class="platform-logo ${type}">${logos[type]}</span>${label ? `<span class="qr-label">${esc(label)}</span>` : ''}</div><div class="qr-bookmark-info"><h3>${type==='wechat'?'微信咨询':esc(name)}</h3><p>${esc(desc || '')}</p><span class="channel-hint">${hint}</span></div>`;
-      const cls = `qr-bookmark contact-action-card ${index===0?'primary':''} ${type}`;
+      const text = `<div class="qr-bookmark-info"><h3>${esc(copy.title)}</h3>${copy.lines.map(line=>`<p>${esc(line)}</p>`).join('')}<span class="channel-hint">${esc(copy.hint)}</span></div>`;
+      const inner = `<div class="qr-bookmark-top"><span class="platform-logo ${type}">${logos[type]}</span></div>${text}`;
+      const cls = `qr-bookmark contact-action-card ${type} ${type === 'wechat' ? 'primary' : ''}`;
       if(actionType === 'copy') return `<button class="${cls} js-copy-channel" type="button" style="--qr-index:${index}" data-copy="${esc(C.contact?.wechatId || 'biaoliruyi_dong')}" data-done="已复制微信号" aria-label="复制微信号">${inner}</button>`;
       if(actionType === 'link') return `<a class="${cls}" style="--qr-index:${index}" href="${esc(C.contact?.douyinUrl || '#contact')}" target="_blank" rel="noopener" aria-label="打开${esc(name)}">${inner}</a>`;
       return `<div class="${cls} disabled" style="--qr-index:${index}" aria-label="${esc(name)}待补链接">${inner}</div>`;
@@ -152,8 +155,11 @@ const C = window.SITE_CONTENT || {};
                   <h2 class="font-display section-title reveal"><span class="desktop-copy">${esc(C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.titleHighlight)}</span></span><span class="mobile-copy">${esc(C.contact.mobile?.titleTop || C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.mobile?.titleHighlight || C.contact.titleHighlight)}</span></span></h2>
                   <p class="section-desc reveal"><span class="desktop-copy">${esc(C.contact.description)}</span><span class="mobile-copy">${esc(C.contact.mobile?.description || C.contact.description)}</span></p>
                 </div>
-                <div class="contact-channel-board qr-fan-board reveal" aria-label="扫码联系与关注">
-                  ${(C.contact.channels||[]).map((ch,index)=>renderChannelBookmark(ch,index)).join('')}
+                <div class="qr-fan-board reveal is-open" aria-label="扫码联系与关注">
+                  ${(C.contact.channels||[]).sort((a,b)=>{
+                    const rank = n => n.includes('微信') ? 0 : n.includes('抖音') ? 1 : n.includes('小红书') ? 2 : 3;
+                    return rank(a.name || '') - rank(b.name || '');
+                  }).map((ch,index)=>renderChannelBookmark(ch,index)).join('')}
                 </div>
               </div>
               <form class="glass-card quote-form reveal" novalidate>
@@ -424,7 +430,7 @@ const C = window.SITE_CONTENT || {};
       if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});document.querySelectorAll('.qr-fan-board').forEach(el=>el.classList.add('is-open'));ready();return;}
       if(isMobile){
         if(window.ScrollTrigger){ ScrollTrigger.getAll().forEach(st=>st.kill()); }
-        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .qr-bookmark, .quote-form'));
+        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .timeline-card, .project-card, .skill-card, .about-stat, .qr-fan-board, .qr-card, .qr-bookmark, .quote-form'));
         mobileTargets.forEach((el,i)=>{
           el.classList.add('mobile-reveal');
           el.style.transitionDelay = `${Math.min(i * 60, 350)}ms`;
@@ -519,9 +525,9 @@ const C = window.SITE_CONTENT || {};
         gsap.fromTo(el, { opacity:0, x:i%2===0?-26:26, y:16 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, x:0, y:0, duration:.58, delay:Math.min(i*.07,.28), ease:'power3.out' });
       });
 
-      // Contact form — simple rise, QR fan opens after the board is revealed
-      document.querySelectorAll('.contact-channel-board, .quote-form').forEach((el,i)=>{
-        gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.6, delay:Math.min(i*.06,.18), ease:'power3.out', onComplete(){ if(el.classList.contains('qr-fan-board')) el.classList.add('is-open'); } });
+      // Contact form — keep QR fan visible; only animate the form reveal
+      document.querySelectorAll('.quote-form').forEach((el,i)=>{
+        gsap.fromTo(el, { opacity:0, y:32 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, y:0, duration:.6, delay:Math.min(i*.06,.18), ease:'power3.out' });
       });
 
       // Hero elements — staged page load moment
@@ -617,4 +623,3 @@ const C = window.SITE_CONTENT || {};
     initLogin();
     initWebGL();
     initAnimations();
-    initFullPageScroll();

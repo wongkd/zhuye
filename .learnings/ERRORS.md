@@ -38,3 +38,32 @@ Command failures and integration errors.
 - **Notes**: 已删除 editor.html 二次密码页面和前端门禁逻辑，保留同步/历史/回退 API 密码校验。
 
 ---
+
+## [ERR-20260613-002] git_push_schannel_revocation_check
+
+**Logged**: 2026-06-13T09:16:33+08:00
+**Priority**: medium
+**Status**: pending
+**Area**: infra
+
+### Summary
+Git push to GitHub failed on Windows because Schannel could not check certificate revocation status.
+
+### Error
+```text
+fatal: unable to access 'https://github.com/wongkd/zhuye.git/': schannel: next InitializeSecurityContext failed: CRYPT_E_NO_REVOCATION_CHECK (0x80092012) - 吊销功能无法检查证书是否吊销。
+```
+
+### Context
+- Command attempted: push local `main` commit to `https://github.com/wongkd/zhuye.git`.
+- Local commit was created successfully and repository became `ahead 1`.
+- This is a Windows Git/Schannel revocation-check connectivity issue, not a code validation failure.
+
+### Suggested Fix
+Retry push with a one-off Git config override `-c http.schannelCheckRevoke=false` if the network environment blocks revocation checks; avoid making it global unless repeatedly required.
+
+### Metadata
+- Reproducible: unknown
+- Related Files: assets/site.css, assets/site.js, content.js, server.js
+
+---
