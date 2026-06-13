@@ -99,19 +99,6 @@ const C = window.SITE_CONTENT || {};
             </div>
           </section>
 
-          <section class="mobile-highlights" aria-label="装修服务重点">
-            <div class="section-head">
-              <span class="eyebrow reveal">先看重点</span>
-              <h2 class="section-title reveal">装修预算，<br>不该越装越糊涂。</h2>
-              <p class="section-desc reveal">把预算、材料、节点和交付拆成清楚重点，先看明白，再决定怎么推进。</p>
-            </div>
-            <div class="highlight-scroll">
-              <article class="highlight-card reveal"><div><span class="highlight-index">01</span><strong>预算清晰</strong><p>开工前先讲清面积、材料等级、施工项和可能增项，让报价更接近真实落地成本。</p></div></article>
-              <article class="highlight-card reveal"><div><span class="highlight-index">02</span><strong>材料透明</strong><p>围绕主材、辅材和关键工艺做同步规划，减少只看效果图、不看执行标准的问题。</p></div></article>
-              <article class="highlight-card reveal"><div><span class="highlight-index">03</span><strong>节点可控</strong><p>拆改、水电、泥木、油漆和安装分阶段推进，每个关键节点都能被检查和验收。</p></div></article>
-            </div>
-          </section>
-
           <section id="about" class="scroll-stage">
             <div class="container-page about-grid">
               <div class="sticky-copy">
@@ -152,7 +139,7 @@ const C = window.SITE_CONTENT || {};
                 <p class="section-desc reveal">${esc(C.skillsSection.description)}</p>
               </div>
               <div class="skills-grid">
-                ${[...(C.skillGroups||[])].sort((a,b)=>(b.featured===true)-(a.featured===true)).map((g,index)=>{const featured=g.featured===true;const brief={整装:['整体打包报价','设计材料施工统一核算','省心托管，风格和落地一起管。',['统一核算','主材配置','施工交付','省心托管']],传统报价式半包:['人工 + 辅材 + 清单','主材业主自购','主材自己选，施工和现场有人管。',['清单报价','主材自购','辅材施工','节点验收']],特色式半包:['只收工程管理费','其他项目成本价','管理费透明收，材料施工按成本价走。',['费用拆开','成本可看','材料明细','节点验收']]}[g.title]||[g.price||g.title,(g.items||[])[0]||'报价清楚',g.standard||'',(g.items||[]).slice(0,4)];return `<article class="glass-card skill-card pricing-card reveal${featured ? ' featured' : ''}"><div class="pricing-card-head"><div class="icon-box">${skillIcon}</div>${featured ? '<span class="featured-badge">最省钱</span>' : ''}</div><h3>${esc(g.title)}</h3><div class="pricing-promise"><strong>${esc(brief[0])}</strong><span>${esc(brief[1])}</span></div>${brief[2] ? `<p class="pricing-standard">${esc(brief[2])}</p>` : ''}<div class="skill-tags">${brief[3].map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div></article>`}).join('')}
+                ${[...(C.skillGroups||[])].sort((a,b)=>(b.featured===true)-(a.featured===true)).map((g,index)=>{const featured=g.featured===true;const brief={整装:['整体打包报价','设计材料施工统一核算','省心托管，风格和落地一起管。',['统一核算','主材配置','施工交付','省心托管']],传统报价式半包:['人工 + 辅材 + 清单','主材业主自购','主材自己选，施工和现场有人管。',['清单报价','主材自购','辅材施工','节点验收']],特色式半包:['只收工程管理费','其他项目成本价','管理费透明收，材料施工按成本价走。',['费用拆开','成本可看','材料明细','节点验收']]}[g.title]||[g.price||g.title,(g.items||[])[0]||'报价清楚',g.standard||'',(g.items||[]).slice(0,4)];return `<article class="glass-card skill-card reveal${featured ? ' featured' : ''}"><div class="pricing-card-head"><div class="icon-box">${skillIcon}</div>${featured ? '<span class="featured-badge">最省钱</span>' : ''}</div><h3>${esc(g.title)}</h3><div class="pricing-promise"><strong>${esc(brief[0])}</strong><span>${esc(brief[1])}</span></div>${brief[2] ? `<p class="pricing-standard">${esc(brief[2])}</p>` : ''}<div class="skill-tags">${brief[3].map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div></article>`}).join('')}
               </div>
             </div>
           </section>
@@ -414,7 +401,7 @@ const C = window.SITE_CONTENT || {};
       const unique = nodes => Array.from(new Set(Array.from(nodes).filter(Boolean)));
       const setStagger = (nodes, step = 1) => unique(nodes).forEach((el,i)=>el.style.setProperty('--stagger-index', String(i * step)));
       const bindPressFeedback = () => {
-        unique(document.querySelectorAll('.project-card, .skill-card, .highlight-card, .contact-link, .qr-card, .qr-bookmark, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
+        unique(document.querySelectorAll('.project-card, .skill-card, .contact-link, .qr-card, .qr-bookmark, .btn-primary, .btn-outline, .menu-toggle, .theme-toggle')).forEach(el=>{
           const down = () => el.classList.add('is-pressed');
           const up = () => el.classList.remove('is-pressed');
           el.addEventListener('pointerdown', down, { passive:true });
@@ -437,7 +424,7 @@ const C = window.SITE_CONTENT || {};
       if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});document.querySelectorAll('.qr-fan-board').forEach(el=>el.classList.add('is-open'));ready();return;}
       if(isMobile){
         if(window.ScrollTrigger){ ScrollTrigger.getAll().forEach(st=>st.kill()); }
-        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .qr-bookmark, .quote-form'));
+        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .qr-bookmark, .quote-form'));
         mobileTargets.forEach((el,i)=>{
           el.classList.add('mobile-reveal');
           el.style.transitionDelay = `${Math.min(i * 60, 350)}ms`;
@@ -574,6 +561,8 @@ const C = window.SITE_CONTENT || {};
     }
 
     function initFullPageScroll(){
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const sections = Array.from(document.querySelectorAll('section[id]'));
       if(!sections.length || isMobile) return;
       let current = 0;
