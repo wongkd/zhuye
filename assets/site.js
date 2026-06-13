@@ -13,7 +13,7 @@ const C = window.SITE_CONTENT || {};
     function renderChannelBookmark(ch, index=0){
       const image = ch.image ? `<img src="${esc(ch.image)}" alt="${esc(ch.imageAlt || ch.name)}" loading="lazy">` : `<div class="qr-placeholder"><span>${esc((ch.name || 'QR').slice(0,3))}</span><small>后台上传</small></div>`;
       const order = String(index + 1).padStart(2,'0');
-      return `<article class="qr-bookmark" style="--qr-index:${index}" aria-label="${esc(ch.name || '联系渠道')}"><div class="qr-bookmark-top"><span class="qr-bookmark-order">${order}</span><span class="qr-label">${esc(ch.label || '扫码了解')}</span></div><div class="qr-bookmark-image">${image}</div><div class="qr-bookmark-info"><h3>${esc(ch.name || '联系渠道')}</h3><p>${esc(ch.description || '')}</p></div></article>`;
+      return `<article class="qr-bookmark" style="--qr-index:${index}" aria-label="${esc(ch.name || '联系渠道')}"><div class="qr-bookmark-top"><span class="qr-bookmark-order">${order}</span><span class="qr-label">${esc(ch.label || '扫码了解')}</span></div><div class="qr-bookmark-image">${image}</div><div class="qr-bookmark-info"><h3>${esc(ch.name || '联系渠道')}</h3></div></article>`;
     }
 
     function renderNavContact(){
