@@ -14,22 +14,23 @@ const C = window.SITE_CONTENT || {};
       const name = ch.name || '联系渠道';
       const type = name.includes('微信') ? 'wechat' : name.includes('抖音') ? 'douyin' : 'rednote';
       const logos = {
-        wechat:`<img src="assets/images/contact/logo-wechat-app.png" alt="微信" loading="lazy">`,
+        wechat:`<img class="platform-logo-main" src="assets/images/contact/logo-wechat-app.png" alt="微信" loading="lazy"><img class="platform-logo-qr" src="assets/images/contact/wechat-qr-hover.png" alt="微信二维码" loading="lazy">`,
         douyin:`<img src="assets/images/contact/logo-douyin-app.png" alt="抖音" loading="lazy">`,
         rednote:`<img src="assets/images/contact/logo-rednote-app.png" alt="小红书" loading="lazy">`
       };
       const copy = {
-        wechat:{title:'微信咨询',lines:['发送户型图、面积、预算诉求'],hint:'点击复制微信号'},
-        douyin:{title:'抖音主页',lines:['施工现场 / 装修避坑'],hint:'点击跳转主页'},
-        rednote:{title:'小红书主页',lines:['案例笔记待补充'],hint:'链接待补充'}
+        wechat:{desktop:{title:'微信咨询',lines:['发送户型图出方案'],hint:''},mobile:{title:'微信咨询',lines:['发送户型图、面积、预算诉求'],hint:'点击复制微信号'}},
+        douyin:{desktop:{title:'装修干货',lines:[],hint:'点击卡片跳转链接'},mobile:{title:'抖音主页',lines:['施工现场 / 装修避坑'],hint:'点击跳转主页'}},
+        rednote:{desktop:{title:'小红书主页',lines:[],hint:'点击卡片跳转链接'},mobile:{title:'小红书主页',lines:['案例笔记待补充'],hint:'链接待补充'}}
       }[type];
-      const actionType = type === 'wechat' ? 'copy' : type === 'douyin' ? 'link' : 'pending';
-      const text = `<div class="qr-bookmark-info"><h3>${esc(copy.title)}</h3>${copy.lines.map(line=>`<p>${esc(line)}</p>`).join('')}<span class="channel-hint">${esc(copy.hint)}</span></div>`;
+      const actionType = type === 'wechat' ? 'copy' : 'link';
+      const renderCopySet = (set, cls) => `<div class="qr-copy-set ${cls}"><h3>${esc(set.title)}</h3>${set.lines.map(line=>`<p>${esc(line)}</p>`).join('')}${set.hint ? `<span class="channel-hint">${esc(set.hint)}</span>` : ''}</div>`;
+      const text = `<div class="qr-bookmark-info">${renderCopySet(copy.desktop,'desktop-channel-copy')}${renderCopySet(copy.mobile,'mobile-channel-copy')}</div>`;
       const inner = `<div class="qr-bookmark-top"><span class="platform-logo ${type}">${logos[type]}</span></div>${text}`;
       const cls = `qr-bookmark contact-action-card ${type} ${type === 'wechat' ? 'primary' : ''}`;
-      if(actionType === 'copy') return `<button class="${cls} js-copy-channel" type="button" style="--qr-index:${index}" data-copy="${esc(C.contact?.wechatId || 'biaoliruyi_dong')}" data-done="已复制微信号" aria-label="复制微信号">${inner}</button>`;
-      if(actionType === 'link') return `<a class="${cls}" style="--qr-index:${index}" href="${esc(C.contact?.douyinUrl || '#contact')}" target="_blank" rel="noopener" aria-label="打开${esc(name)}">${inner}</a>`;
-      return `<div class="${cls} disabled" style="--qr-index:${index}" aria-label="${esc(name)}待补链接">${inner}</div>`;
+      if(actionType === 'copy') return `<button class="${cls} js-copy-channel" type="button" style="--qr-index:${index}" data-copy="${esc(C.contact?.wechatId || 'biaoliruyi_dong')}" data-done="已复制微信号" aria-label="复制微信号，悬停查看二维码">${inner}</button>`;
+      const url = type === 'douyin' ? (C.contact?.douyinUrl || '#contact') : (ch.url || '#contact');
+      return `<a class="${cls}" style="--qr-index:${index}" href="${esc(url)}" target="_blank" rel="noopener" aria-label="打开${esc(name)}">${inner}</a>`;
     }
 
     function renderNavContact(){
