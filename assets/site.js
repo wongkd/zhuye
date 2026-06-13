@@ -536,9 +536,59 @@ const C = window.SITE_CONTENT || {};
       addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)},{passive:true});
     }
 
+    function initFullPageScroll(){
+      const sections = Array.from(document.querySelectorAll('section[id]'));
+      if(!sections.length || isMobile) return;
+      let current = 0;
+      let busy = false;
+      const THROTTLE = 900;
+      const MIN_DELTA = 40;
+
+      function go(idx){
+        if(busy || idx<0 || idx>=sections.length) return;
+        busy = true;
+        current = idx;
+        const top = sections[idx].offsetTop;
+        if(window.gsap && !reduce){
+          gsap.to(window, {duration:.7, scrollTo:{y:top, offsetY:80}, ease:'power3.out', onComplete(){busy=false}});
+        } else {
+          window.scrollTo({top:top-80, behavior:'smooth'});
+          setTimeout(()=>{busy=false}, THROTTLE);
+        }
+      }
+
+      window.addEventListener('wheel', (e)=>{
+        if(busy || !isDesktop()) return;
+        if(Math.abs(e.deltaY) < MIN_DELTA) return;
+        e.preventDefault();
+        if(e.deltaY > 0) go(current+1);
+        else go(current-1);
+      }, {passive:false});
+
+      document.addEventListener('keydown', (e)=>{
+        if(busy || !isDesktop()) return;
+        if(e.key === 'ArrowDown' || e.key === 'PageDown'){ e.preventDefault(); go(current+1); }
+        if(e.key === 'ArrowUp' || e.key === 'PageUp'){ e.preventDefault(); go(current-1); }
+      });
+
+      function isDesktop(){ return window.innerWidth > 767; }
+
+      // keep current index in sync when user swipes or navigates via nav
+      window.addEventListener('scroll', ()=>{
+        if(busy) return;
+        const cy = window.scrollY + window.innerHeight * .45;
+        let best = 0;
+        for(let i=0; i<sections.length; i++){
+          if(cy >= sections[i].offsetTop) best = i;
+        }
+        current = best;
+      }, {passive:true});
+    }
+
     render();
     initTheme();
     initMenu();
     initLogin();
     initWebGL();
     initAnimations();
+    initFullPageScroll();
