@@ -11,9 +11,22 @@ const C = window.SITE_CONTENT || {};
     }
 
     function renderChannelBookmark(ch, index=0){
-      const image = ch.image ? `<img src="${esc(ch.image)}" alt="${esc(ch.imageAlt || ch.name)}" loading="lazy">` : `<div class="qr-placeholder"><span>${esc((ch.name || 'QR').slice(0,3))}</span><small>后台上传</small></div>`;
-      const order = String(index + 1).padStart(2,'0');
-      return `<article class="qr-bookmark" style="--qr-index:${index}" aria-label="${esc(ch.name || '联系渠道')}"><div class="qr-bookmark-top"><span class="qr-bookmark-order">${order}</span><span class="qr-label">${esc(ch.label || '扫码了解')}</span></div><div class="qr-bookmark-image">${image}</div><div class="qr-bookmark-info"><h3>${esc(ch.name || '联系渠道')}</h3></div></article>`;
+      const name = ch.name || '联系渠道';
+      const type = name.includes('微信') ? 'wechat' : name.includes('抖音') ? 'douyin' : 'rednote';
+      const logos = {
+        wechat:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.2 4C5.15 4 2 6.68 2 9.98c0 1.78.93 3.38 2.4 4.47l-.34 1.22 1.5-.84c1.06.46 2.3.72 3.64.72.25 0 .49-.01.73-.03-.13-.43-.2-.88-.2-1.34 0-2.98 2.86-5.4 6.39-5.4.15 0 .3 0 .45.02C15.95 6.07 12.9 4 9.2 4Zm-2.25 4.9a.78.78 0 1 1 0-1.56.78.78 0 0 1 0 1.56Zm4.5 0a.78.78 0 1 1 0-1.56.78.78 0 0 1 0 1.56Zm4.85 1.05c-2.93 0-5.3 1.95-5.3 4.35s2.37 4.35 5.3 4.35c.86 0 1.68-.17 2.4-.48l1.25.7-.28-1.02C20.9 17.05 21.6 15.8 21.6 14.3c0-2.4-2.37-4.35-5.3-4.35Zm-1.7 3.52a.62.62 0 1 1 0-1.24.62.62 0 0 1 0 1.24Zm3.4 0a.62.62 0 1 1 0-1.24.62.62 0 0 1 0 1.24Z"/></svg>`,
+        douyin:`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.6 1.9c.35 3.02 2.04 4.82 5 5.02v3.42a8.8 8.8 0 0 1-5.05-1.54v6.57c0 3.32-2.7 6.02-6.02 6.02a6.02 6.02 0 0 1-1.2-11.92v3.55a2.62 2.62 0 1 0 3.33 2.52V1.9h3.94Z"/></svg>`,
+        rednote:`<img src="assets/images/contact/rednote-logo.png" alt="小红书" loading="lazy">`
+      };
+      const actionType = type === 'wechat' ? 'copy' : type === 'douyin' ? 'link' : 'pending';
+      const hint = actionType === 'copy' ? '点击卡片复制微信号' : actionType === 'link' ? '点击卡片打开主页' : '链接待补充';
+      const label = type === 'wechat' ? '' : ch.label;
+      const desc = type === 'wechat' ? '发送户型图 / 面积 / 预算' : type === 'douyin' ? '查看施工现场和避坑内容' : '链接待补，后续看案例笔记';
+      const inner = `<div class="qr-bookmark-top"><span class="platform-logo ${type}">${logos[type]}</span>${label ? `<span class="qr-label">${esc(label)}</span>` : ''}</div><div class="qr-bookmark-info"><h3>${type==='wechat'?'微信咨询':esc(name)}</h3><p>${esc(desc || '')}</p><span class="channel-hint">${hint}</span></div>`;
+      const cls = `qr-bookmark contact-action-card ${index===0?'primary':''} ${type}`;
+      if(actionType === 'copy') return `<button class="${cls} js-copy-channel" type="button" style="--qr-index:${index}" data-copy="${esc(C.contact?.wechatId || 'biaoliruyi_dong')}" data-done="已复制微信号" aria-label="复制微信号">${inner}</button>`;
+      if(actionType === 'link') return `<a class="${cls}" style="--qr-index:${index}" href="${esc(C.contact?.douyinUrl || '#contact')}" target="_blank" rel="noopener" aria-label="打开${esc(name)}">${inner}</a>`;
+      return `<div class="${cls} disabled" style="--qr-index:${index}" aria-label="${esc(name)}待补链接">${inner}</div>`;
     }
 
     function renderNavContact(){
@@ -64,7 +77,7 @@ const C = window.SITE_CONTENT || {};
             <div class="container-page hero-grid">
               <div class="hero-copy">
                 <span class="eyebrow reveal">${esc(C.hero.eyebrow)}</span>
-                <h1 class="font-display hero-title reveal"><span class="gradient-text">${esc(C.hero.titleHighlight)}</span><br><span>${esc(C.hero.titleMain)}</span></h1>
+                <h1 class="font-display hero-title reveal"><span class="gradient-text">${esc(C.hero.titleHighlight)}</span><br><span class="hero-title-main">${C.hero.titleMain === '把家装成理想生活' ? '<span class="mobile-title-line">把家</span><span class="mobile-title-line">装成理想生活</span>' : esc(C.hero.titleMain)}</span></h1>
                 <p class="hero-subtitle reveal">${esc(C.hero.subtitle)}</p>
                 <div class="hero-actions reveal">
                   <a href="${esc(C.hero.primaryUrl || '#projects')}" class="btn-primary"${/^https?:\/\//.test(C.hero.primaryUrl || '') ? ' target="_blank" rel="noopener"' : ''}>${esc(C.hero.primaryButton)} ${/^https?:\/\//.test(C.hero.primaryUrl || '') ? externalIcon : arrowIcon}</a>
@@ -104,14 +117,15 @@ const C = window.SITE_CONTENT || {};
               <div class="sticky-copy">
                 <span class="eyebrow reveal">${esc(C.about.eyebrow)}</span>
                 <h2 class="font-display section-title reveal">${esc(C.about.titleTop)}<br><span class="gradient-text">${esc(C.about.titleHighlight)}</span></h2>
-                <p class="section-desc reveal">${esc(C.about.description)}</p>
+                <p class="section-desc about-desc reveal"><span class="about-desc-full">${esc(C.about.description)}</span><span class="about-desc-short">把预算、材料、工艺和验收节点讲清楚，让每一步都经得起检查。</span></p><div class="about-promise-tags reveal"><span>预算透明</span><span>材料清晰</span><span>工艺可追踪</span><span>交付可验收</span></div>
               </div>
               <div class="about-content">
                 <div class="timeline">
-                  ${(C.about.experiences||[]).map(e=>`<article class="glass-card timeline-card reveal"><div class="timeline-top"><div><h3>${esc(e.role)}</h3><div class="company">${esc(e.company)}</div></div><span class="period">${esc(e.period)}</span></div><p>${esc(e.description)}</p></article>`).join('')}
+                  ${(C.about.experiences||[]).map(e=>`<article class="glass-card timeline-card reveal"><div class="timeline-top"><span class="period" data-step="${esc(e.period.replace('STEP ',''))}">${esc(e.period)}</span><div><h3>${esc(e.role)}</h3><div class="company">${esc(e.company)}</div><div class="company-tags" aria-label="${esc(e.company)}">${esc(e.company).split(' / ').slice(0,4).map(t=>`<span>${t}</span>`).join('')}</div></div></div><p>${esc(e.description)}</p></article>`).join('')}
                 </div>
+                <div class="about-proof-label reveal">交付不是口号，是结果沉淀</div>
                 <div class="about-stats">
-                  ${(C.about.stats||[]).map(s=>`<div class="glass-card about-stat reveal"><div class="stat-number gradient-text" data-count="${Number(s.value)||0}" data-suffix="${esc(s.suffix)}">${esc(s.value)}${esc(s.suffix)}</div><div class="text-[13px] text-stone-400 mt-2">${esc(s.label)}</div></div>`).join('')}
+                  ${(C.about.stats||[]).map(s=>`<div class="glass-card about-stat reveal"><div class="stat-number gradient-text" data-count="${Number(s.value)||0}" data-suffix="${esc(s.suffix)}">${esc(s.value)}${esc(s.suffix)}</div><div class="stat-label">${esc(s.label)}</div></div>`).join('')}
                 </div>
               </div>
             </div>
@@ -125,7 +139,7 @@ const C = window.SITE_CONTENT || {};
                 <p class="section-desc reveal">${esc(C.projectsSection.description)}</p>
               </div>
               <div class="projects-grid">
-                ${(C.projects||[]).map(p=>`<article class="project-card glass-card reveal"><div class="project-media"><img src="${esc(p.image)}" alt="${esc(p.title)}" class="project-image" loading="lazy"></div><div class="project-body"><div class="meta-row"><span class="badge">${esc(p.category)}</span><span class="year">${esc(p.year)}</span></div><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><a href="${esc(p.link||'#contact')}" class="text-link">咨询类似方案 ${arrowIcon}</a></div></article>`).join('')}
+                ${(C.projects||[]).map(p=>`<article class="project-card glass-card reveal"><div class="project-media"><img src="${esc(p.image)}" alt="${esc(p.title)}" class="project-image" loading="lazy"></div><div class="project-body"><div class="meta-row"><span class="badge">${esc(p.category)}</span><span class="year">${esc(p.year)}</span></div><h3>${esc(p.title)}</h3><div class="project-tags"><span>${esc(p.category)}</span><span>预算规划</span><span>交付可验</span></div><p>${esc(p.description)}</p><a href="${esc(p.link||'#contact')}" class="text-link">查看方案 ${arrowIcon}</a></div></article>`).join('')}
               </div>
             </div>
           </section>
@@ -138,7 +152,7 @@ const C = window.SITE_CONTENT || {};
                 <p class="section-desc reveal">${esc(C.skillsSection.description)}</p>
               </div>
               <div class="skills-grid">
-                ${(C.skillGroups||[]).map((g,index)=>`<article class="glass-card skill-card pricing-card reveal${g.featured ? ' featured' : ''}"><div class="icon-box">${skillIcon}</div><div class="pricing-card-index">${String(index + 1).padStart(2,'0')}</div><h3>${esc(g.title)}</h3>${g.price ? `<div class="pricing-price">${esc(g.price)}</div>` : ''}${g.standard ? `<p class="pricing-standard">${esc(g.standard)}</p>` : ''}<div class="skill-tags">${(g.items||[]).map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div>${g.note ? `<p class="pricing-note">${esc(g.note)}</p>` : ''}${g.featured ? `<div class="featured-guide"><span>先看这个</span><strong>成本价透明 + 管理费清楚</strong></div>` : ''}</article>`).join('')}
+                ${[...(C.skillGroups||[])].sort((a,b)=>(b.featured===true)-(a.featured===true)).map((g,index)=>{const featured=g.featured===true;const brief={整装:['整体打包报价','设计材料施工统一核算','省心托管，风格和落地一起管。',['统一核算','主材配置','施工交付','省心托管']],传统报价式半包:['人工 + 辅材 + 清单','主材业主自购','主材自己选，施工和现场有人管。',['清单报价','主材自购','辅材施工','节点验收']],特色式半包:['只收工程管理费','其他项目成本价','管理费透明收，材料施工按成本价走。',['费用拆开','成本可看','材料明细','节点验收']]}[g.title]||[g.price||g.title,(g.items||[])[0]||'报价清楚',g.standard||'',(g.items||[]).slice(0,4)];return `<article class="glass-card skill-card pricing-card reveal${featured ? ' featured' : ''}"><div class="pricing-card-head"><div class="icon-box">${skillIcon}</div>${featured ? '<span class="featured-badge">最省钱</span>' : ''}</div><h3>${esc(g.title)}</h3><div class="pricing-promise"><strong>${esc(brief[0])}</strong><span>${esc(brief[1])}</span></div>${brief[2] ? `<p class="pricing-standard">${esc(brief[2])}</p>` : ''}<div class="skill-tags">${brief[3].map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div></article>`}).join('')}
               </div>
             </div>
           </section>
@@ -147,20 +161,18 @@ const C = window.SITE_CONTENT || {};
             <div class="container-page contact-grid">
               <div class="contact-copy">
                 <div class="section-head">
-                  <span class="eyebrow reveal">${esc(C.contact.eyebrow)}</span>
-                  <h2 class="font-display section-title reveal">${esc(C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.titleHighlight)}</span></h2>
-                  <p class="section-desc reveal">${esc(C.contact.description)}</p>
-                </div>
-                <div class="contact-links reveal">
-                  ${(C.contact.links||[]).map(l=>`<a class="contact-link" href="${esc(l.url||'#contact')}"><span class="contact-icon">${contactIcon}</span><span>${esc(l.label)}</span>${arrowIcon}</a>`).join('')}
+                  <span class="eyebrow reveal"><span class="desktop-copy">${esc(C.contact.eyebrow)}</span><span class="mobile-copy">${esc(C.contact.mobile?.eyebrow || C.contact.eyebrow)}</span></span>
+                  <h2 class="font-display section-title reveal"><span class="desktop-copy">${esc(C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.titleHighlight)}</span></span><span class="mobile-copy">${esc(C.contact.mobile?.titleTop || C.contact.titleTop)}<br><span class="gradient-text">${esc(C.contact.mobile?.titleHighlight || C.contact.titleHighlight)}</span></span></h2>
+                  <p class="section-desc reveal"><span class="desktop-copy">${esc(C.contact.description)}</span><span class="mobile-copy">${esc(C.contact.mobile?.description || C.contact.description)}</span></p>
                 </div>
                 <div class="contact-channel-board qr-fan-board reveal" aria-label="扫码联系与关注">
                   ${(C.contact.channels||[]).map((ch,index)=>renderChannelBookmark(ch,index)).join('')}
                 </div>
               </div>
               <form class="glass-card quote-form reveal" novalidate>
+                <div class="form-head"><span>预算预估表单</span><strong>补充房屋信息</strong><p>信息越完整，初步判断越接近真实预算。</p></div>
                 <div class="field"><label for="name">${esc(C.contact.form.nameLabel)}</label><input id="name" name="name" type="text" placeholder="${esc(C.contact.form.namePlaceholder)}" autocomplete="name" required><small class="field-error" data-error-for="name"></small></div>
-                <div class="field"><label for="email">${esc(C.contact.form.emailLabel)}</label><input id="email" name="email" type="email" placeholder="${esc(C.contact.form.emailPlaceholder)}" autocomplete="email" required><small class="field-error" data-error-for="email"></small></div>
+                <div class="field"><label for="email"><span class="desktop-copy">邮箱</span><span class="mobile-copy">邮箱 / 手机号</span></label><input id="email" name="email" type="text" placeholder="${esc(C.contact.form.emailPlaceholder)}" autocomplete="email" required><small class="field-error" data-error-for="email"></small></div>
                 <div class="field"><label for="type">${esc(C.contact.form.typeLabel)}</label><select id="type" name="type" required><option value="">${esc(C.contact.form.typePlaceholder)}</option>${(C.contact.form.typeOptions||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select><small class="field-error" data-error-for="type"></small></div>
                 <div class="field"><label for="message">${esc(C.contact.form.messageLabel)}</label><textarea id="message" name="message" placeholder="${esc(C.contact.form.messagePlaceholder)}" required></textarea><small class="field-error" data-error-for="message"></small></div>
                 <button class="btn-primary submit-btn" type="submit"><span class="submit-spinner" aria-hidden="true"></span><span class="submit-label">${esc(C.contact.form.submitText)}</span> ${arrowIcon}</button>
@@ -357,11 +369,27 @@ const C = window.SITE_CONTENT || {};
         let ok = true;
         setError('name'); setError('email'); setError('type'); setError('message');
         if(!String(values.name||'').trim()){ setError('name','请留下称呼，方便后续沟通。'); ok=false; }
-        if(!/^\S+@\S+\.\S+$/.test(String(values.email||'').trim())){ setError('email','请输入有效邮箱，便于接收方案反馈。'); ok=false; }
+        const contact = String(values.email||'').trim();
+        const isEmail = /^\S+@\S+\.\S+$/.test(contact);
+        const isPhone = /^1[3-9]\d{9}$/.test(contact.replace(/[\s-]/g,''));
+        if(!isEmail && !isPhone){ setError('email','请输入有效邮箱或手机号，便于接收方案反馈。'); ok=false; }
         if(!String(values.type||'').trim()){ setError('type','请选择项目类型。'); ok=false; }
         if(String(values.message||'').trim().length < 8){ setError('message','请简单描述项目需求，至少 8 个字。'); ok=false; }
         return { ok, values };
       };
+      document.querySelectorAll('.js-copy-channel').forEach(btn=>btn.addEventListener('click',async()=>{
+        const value = btn.dataset.copy || '';
+        if(!value) return;
+        const hint = btn.querySelector('.channel-hint');
+        const original = hint?.textContent || '';
+        try{
+          if(navigator.clipboard?.writeText) await navigator.clipboard.writeText(value);
+          else { const ta=document.createElement('textarea'); ta.value=value; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+          if(hint) hint.textContent = btn.dataset.done || '已复制';
+          btn.classList.add('copied');
+          window.setTimeout(()=>{ if(hint) hint.textContent=original; btn.classList.remove('copied')},1800);
+        }catch(err){ if(hint) hint.textContent = value; }
+      }));
       form.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>setError(el.name)));
       form.addEventListener('submit', async e => {
         e.preventDefault();
@@ -369,7 +397,7 @@ const C = window.SITE_CONTENT || {};
         if(!ok){ showFeedback('请先完善标红字段，再提交沟通信息。','error'); return; }
         submit.disabled = true; submit.classList.add('loading'); if(label) label.textContent = '正在记录...';
         await new Promise(resolve=>setTimeout(resolve,520));
-        const summary = `客户称呼：${values.name}\n邮箱：${values.email}\n项目类型：${values.type}\n需求：${values.message}`;
+        const summary = `客户称呼：${values.name}\n邮箱/手机号：${values.email}\n装修方式：${values.type}\n房屋面积和需求：${values.message}`;
         localStorage.setItem('blry-contact-latest', JSON.stringify({ ...values, savedAt:new Date().toISOString() }));
         showFeedback((C.contact.form.successMessage || '已记录，我们会尽快联系你。') + ' 摘要已保存在本机，可复制发送到邮箱。','success');
         if(navigator.clipboard?.writeText){ navigator.clipboard.writeText(summary).catch(()=>{}); }
@@ -409,7 +437,7 @@ const C = window.SITE_CONTENT || {};
       if(reduce){document.querySelectorAll('.reveal').forEach(el=>{el.style.opacity=1;el.style.transform='none'});document.querySelectorAll('.qr-fan-board').forEach(el=>el.classList.add('is-open'));ready();return;}
       if(isMobile){
         if(window.ScrollTrigger){ ScrollTrigger.getAll().forEach(st=>st.kill()); }
-        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .quote-form'));
+        const mobileTargets = unique(document.querySelectorAll('.hero-copy .reveal, .hero-visual, .hero-stats-mobile .stat-pill, .section-head .reveal, .sticky-copy .reveal, .highlight-card, .timeline-card, .project-card, .skill-card, .about-stat, .contact-channel-board, .qr-card, .qr-bookmark, .quote-form'));
         mobileTargets.forEach((el,i)=>{
           el.classList.add('mobile-reveal');
           el.style.transitionDelay = `${Math.min(i * 60, 350)}ms`;
@@ -437,6 +465,15 @@ const C = window.SITE_CONTENT || {};
           });
         }, { root:null, rootMargin:'18% 0px -8% 0px', threshold:.06 });
         mobileTargets.forEach(el=>observer.observe(el));
+        const featuredLightObserver = new IntersectionObserver(entries=>{
+          entries.forEach(entry=>{
+            if(entry.isIntersecting){
+              entry.target.classList.add('is-lit');
+              featuredLightObserver.unobserve(entry.target);
+            }
+          });
+        }, { root:null, rootMargin:'-18% 0px -18% 0px', threshold:.42 });
+        document.querySelectorAll('.skill-card.featured').forEach(el=>featuredLightObserver.observe(el));
         setTimeout(()=>document.querySelectorAll('.hero .mobile-reveal').forEach(show), 180);
         const animateNumber = stat => {
           if(stat.dataset.counted === 'true') return;

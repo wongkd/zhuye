@@ -186,6 +186,14 @@ window.SITE_CONTENT = {
     "titleHighlight": "先把预算算清楚",
     "description": "留下户型、面积、城市和装修想法，我们会根据需求给出初步预算判断和方案建议。未确定风格也没关系，先把大方向聊清楚。也可以直接扫码添加微信，或在抖音、小红书查看施工现场与案例灵感。",
     "email": "563838884@qq.com",
+    "wechatId": "biaoliruyi_dong",
+    "douyinUrl": "https://v.douyin.com/nZ42lkW46uo/",
+    "mobile": {
+      "eyebrow": "初步想法",
+      "titleTop": "告诉我你的房子，",
+      "titleHighlight": "帮你把需求捋清楚",
+      "description": "留下户型、面积、城市和预算想法。我给你初步预算判断和方案建议。"
+    },
     "channels": [
       {
         "name": "微信",

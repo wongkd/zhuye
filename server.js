@@ -115,7 +115,8 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Portfolio local CMS running at http://127.0.0.1:${PORT}`);
+  console.log(`LAN preview: http://<your-lan-ip>:${PORT}`);
   console.log(`Editor: http://127.0.0.1:${PORT}/editor.html`);
 });
