@@ -167,7 +167,7 @@ const C = window.SITE_CONTENT || {};
                 <div class="form-head"><span>预算预估表单</span><strong>补充房屋信息</strong><p>信息越完整，初步判断越接近真实预算。</p></div>
                 <div class="field"><label for="name">${esc(C.contact.form.nameLabel)}</label><input id="name" name="name" type="text" placeholder="${esc(C.contact.form.namePlaceholder)}" autocomplete="name" required><small class="field-error" data-error-for="name"></small></div>
                 <div class="field"><label for="email"><span class="desktop-copy">邮箱</span><span class="mobile-copy">邮箱 / 手机号</span></label><input id="email" name="email" type="text" placeholder="${esc(C.contact.form.emailPlaceholder)}" autocomplete="email" required><small class="field-error" data-error-for="email"></small></div>
-                <div class="field"><label for="type">${esc(C.contact.form.typeLabel)}</label><select id="type" name="type" required><option value="">${esc(C.contact.form.typePlaceholder)}</option>${(C.contact.form.typeOptions||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select><small class="field-error" data-error-for="type"></small></div>
+                <div class="field"><label for="type">${esc(C.contact.form.typeLabel)}</label><select id="type" name="type" required><option value="" disabled selected>${esc(C.contact.form.typePlaceholder)}</option>${(C.contact.form.typeOptions||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select><small class="field-error" data-error-for="type"></small></div>
                 <div class="field"><label for="message">${esc(C.contact.form.messageLabel)}</label><textarea id="message" name="message" placeholder="${esc(C.contact.form.messagePlaceholder)}" required></textarea><small class="field-error" data-error-for="message"></small></div>
                 <button class="btn-primary submit-btn" type="submit"><span class="submit-spinner" aria-hidden="true"></span><span class="submit-label">${esc(C.contact.form.submitText)}</span> ${arrowIcon}</button>
                 <p class="form-feedback" aria-live="polite"></p>
@@ -389,13 +389,22 @@ const C = window.SITE_CONTENT || {};
         e.preventDefault();
         const { ok, values } = validate();
         if(!ok){ showFeedback('请先完善标红字段，再提交沟通信息。','error'); return; }
-        submit.disabled = true; submit.classList.add('loading'); if(label) label.textContent = '正在记录...';
-        await new Promise(resolve=>setTimeout(resolve,520));
-        const summary = `客户称呼：${values.name}\n邮箱/手机号：${values.email}\n装修方式：${values.type}\n房屋面积和需求：${values.message}`;
-        localStorage.setItem('blry-contact-latest', JSON.stringify({ ...values, savedAt:new Date().toISOString() }));
-        showFeedback((C.contact.form.successMessage || '已记录，我们会尽快联系你。') + ' 摘要已保存在本机，可复制发送到邮箱。','success');
-        if(navigator.clipboard?.writeText){ navigator.clipboard.writeText(summary).catch(()=>{}); }
-        submit.disabled = false; submit.classList.remove('loading'); if(label) label.textContent = C.contact.form.submitText || '提交需求';
+        submit.disabled = true; submit.classList.add('loading'); if(label) label.textContent = '正在提交...';
+        try {
+          const res = await fetch('/api/send-inquiry', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: values.name, email: values.email, type: values.type, message: values.message })
+          });
+          const data = await res.json();
+          if(!res.ok || !data.ok) throw new Error(data.error || '发送失败');
+          showFeedback('需求已收到，我们会尽快联系你。', 'success');
+          form.reset();
+          if(label) label.textContent = '已提交 ✓';
+        } catch(err) {
+          showFeedback('提交失败，请稍后重试或直接联系微信。', 'error');
+          submit.disabled = false; submit.classList.remove('loading'); if(label) label.textContent = C.contact.form.submitText || '提交需求';
+        }
       });
     }
 
