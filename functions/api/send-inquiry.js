@@ -53,6 +53,7 @@ export async function onRequest({ request, env }) {
     Subject: `【新询盘】${name} 提交了装修预算需求`,
     HtmlBody: html,
     ReplyToAddress: "false",
+    AddressType: "1",
     Format: "JSON",
     Version: "2015-11-23",
     AccessKeyId: keyId,
