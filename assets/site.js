@@ -143,7 +143,7 @@ const C = window.SITE_CONTENT || {};
                 <p class="section-desc reveal">${esc(C.skillsSection.description)}</p>
               </div>
               <div class="skills-grid">
-                ${[...(C.skillGroups||[])].sort((a,b)=>(b.featured===true)-(a.featured===true)).map((g,index)=>{const featured=g.featured===true;const brief={整装:['整体打包报价','设计材料施工统一核算','省心托管，风格和落地一起管。',['统一核算','主材配置','施工交付','省心托管']],传统报价式半包:['人工 + 辅材 + 清单','主材业主自购','主材自己选，施工和现场有人管。',['清单报价','主材自购','辅材施工','节点验收']],特色式半包:['只收工程管理费','其他项目成本价','管理费透明收，材料施工按成本价走。',['费用拆开','成本可看','材料明细','节点验收']]}[g.title]||[g.price||g.title,(g.items||[])[0]||'报价清楚',g.standard||'',(g.items||[]).slice(0,4)];return `<article class="glass-card skill-card reveal${featured ? ' featured' : ''}"><div class="pricing-card-head"><div class="icon-box">${skillIcon}</div>${featured ? '<span class="featured-badge">最省钱</span>' : ''}</div><h3>${esc(g.title)}</h3><div class="pricing-promise"><strong>${esc(brief[0])}</strong><span>${esc(brief[1])}</span></div>${brief[2] ? `<p class="pricing-standard">${esc(brief[2])}</p>` : ''}<div class="skill-tags">${brief[3].map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div></article>`}).join('')}
+                ${[...(C.skillGroups||[])].sort((a,b)=>(b.featured===true)-(a.featured===true)).map((g,index)=>{const featured=g.featured===true;const brief={整装:['整体打包报价','设计材料施工统一核算','省心托管，风格和落地一起管。',['统一核算','主材配置','施工交付','省心托管']],传统报价式半包:['人工 + 辅材 + 清单','主材业主自购','主材自己选，施工和现场有人管。',['清单报价','主材自购','辅材施工','节点验收']],特色式半包:['只收工程管理费','其他项目成本价','管理费透明收，材料施工按成本价走。',['费用拆开','成本可看','材料明细','节点验收']]}[g.title]||[g.price||g.title,(g.items||[])[0]||'报价清楚',g.standard||'',(g.items||[]).slice(0,4)];return `<article class="glass-card skill-card reveal${featured ? ' featured' : ''}">${featured ? '<span class="featured-badge">✦ 最省钱</span>' : ''}<div class="pricing-card-head"><div class="icon-box">${skillIcon}</div></div><h3>${esc(g.title)}</h3><div class="pricing-promise"><strong>${esc(brief[0])}</strong><span>${esc(brief[1])}</span></div>${brief[2] ? `<p class="pricing-standard">${esc(brief[2])}</p>` : ''}<div class="skill-tags">${brief[3].map(x=>`<span class="skill-tag">${esc(x)}</span>`).join('')}</div></article>`}).join('')}
               </div>
             </div>
           </section>
@@ -523,7 +523,7 @@ const C = window.SITE_CONTENT || {};
 
       // Skill cards — side + fade
       document.querySelectorAll('.skill-card').forEach((el,i)=>{
-        gsap.fromTo(el, { opacity:0, x:i%2===0?-26:26, y:16 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, x:0, y:0, duration:.58, delay:Math.min(i*.07,.28), ease:'power3.out' });
+        gsap.fromTo(el, { opacity:0, x:-36, y:12 }, { scrollTrigger:{trigger:el,...stDefaults}, opacity:1, x:0, y:0, duration:.62, delay:Math.min(i*.12,.36), ease:'power3.out' });
       });
 
       // Contact form — keep QR fan visible; only animate the form reveal
