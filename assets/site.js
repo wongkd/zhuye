@@ -169,7 +169,7 @@ const C = window.SITE_CONTENT || {};
                 <div class="field"><label for="email"><span class="desktop-copy">联系方式</span><span class="mobile-copy">联系方式</span></label><input id="email" name="email" type="text" placeholder="${esc(C.contact.form.emailPlaceholder)}" autocomplete="email" required><small class="field-error" data-error-for="email"></small></div>
                 <div class="field"><label for="type">${esc(C.contact.form.typeLabel)}</label><select id="type" name="type" required><option value="" disabled selected style="display:none">${esc(C.contact.form.typePlaceholder)}</option>${(C.contact.form.typeOptions||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select><small class="field-error" data-error-for="type"></small></div>
                 <div class="field"><label for="message">${esc(C.contact.form.messageLabel)}</label><textarea id="message" name="message" placeholder="${esc(C.contact.form.messagePlaceholder)}" required></textarea><small class="field-error" data-error-for="message"></small></div>
-                <button class="btn-primary submit-btn" type="submit"><span class="submit-spinner" aria-hidden="true"></span><span class="submit-label">${esc(C.contact.form.submitText)}</span> ${arrowIcon}</button>
+                <button class="btn-primary submit-btn" type="submit"><span class="submit-spinner" aria-hidden="true"></span><span class="submit-label">${esc(C.contact.form.submitText)}</span><span class="submit-arrow"> ${arrowIcon}</span></button>
                 <p class="form-feedback" aria-live="polite"></p>
                 <p class="form-note">提交后页面会在本机生成沟通摘要；正式沟通建议同时发送邮箱，便于附户型图和现场照片。</p>
               </form>
@@ -383,6 +383,12 @@ const C = window.SITE_CONTENT || {};
         }catch(err){ if(hint) hint.textContent = value; }
       }));
       form.querySelectorAll('input,select,textarea').forEach(el=>el.addEventListener('input',()=>setError(el.name)));
+      const typeSelect = form.querySelector('#type');
+      if(typeSelect){
+        const updatePlaceholderColor = () => { typeSelect.style.color = typeSelect.value ? '' : 'var(--muted)'; };
+        updatePlaceholderColor();
+        typeSelect.addEventListener('change', updatePlaceholderColor);
+      }
       form.addEventListener('submit', async e => {
         e.preventDefault();
         const { ok, values } = validate();
@@ -399,6 +405,8 @@ const C = window.SITE_CONTENT || {};
           showFeedback('需求已收到，我们会尽快联系你。', 'success');
           form.reset();
           submit.classList.remove('loading');
+          const arrow = submit.querySelector('.submit-arrow');
+          if(arrow) arrow.style.display = 'none';
           if(label) label.textContent = '已提交 ✓';
           submit.disabled = true;
         } catch(err) {
