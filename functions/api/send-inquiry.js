@@ -64,10 +64,15 @@ export async function onRequest({ request, env }) {
   };
 
   const sorted = Object.keys(params).sort().map(k => `${pct(k)}=${pct(params[k])}`).join("&");
-  const sig = await sign(keySecret, `GET&${pct("/")}&${pct(sorted)}`);
-  const url = `${ENDPOINT}?${sorted}&Signature=${pct(sig)}`;
+  const sig = await sign(keySecret, `POST&${pct("/")}&${pct(sorted)}`);
+  // 用 POST + 表单 body 提交，让阿里云稳定按 UTF-8 解析中文（避免 GET 拼 URL 导致的中文乱码与超长 URL 失败）
+  const formBody = `${sorted}&Signature=${pct(sig)}`;
 
-  const resp = await fetch(url);
+  const resp = await fetch(ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded; charset=utf-8" },
+    body: formBody
+  });
   const result = await resp.json();
   if (result.Code && result.Code !== "OK") return json({ ok: false, error: result.Message }, 502, request);
   return json({ ok: true }, 200, request);
