@@ -1,4 +1,4 @@
-window.SITE_CONTENT = {
+﻿window.SITE_CONTENT = {
   "site": {
     "title": "广东表里如一工程有限公司 | BLRY",
     "logo": "表里如一建筑工程.",
