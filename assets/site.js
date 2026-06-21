@@ -164,7 +164,7 @@ const C = window.SITE_CONTENT || {};
                 </div>
               </div>
               <form class="glass-card quote-form reveal" novalidate>
-                <div class="form-head"><span>预算预估表单</span><strong>补充房屋信息</strong><p>信息越完整，初步判断越接近真实预算。</p></div>
+                <div class="form-head"><span>${esc(C.contact.form.eyebrow||'预算预估表单')}</span><strong>${esc(C.contact.form.heading||'补充房屋信息')}</strong><p>${esc(C.contact.form.subheading||'信息越完整，初步判断越接近真实预算。')}</p></div>
                 <div class="field"><label for="name">${esc(C.contact.form.nameLabel)}</label><input id="name" name="name" type="text" placeholder="${esc(C.contact.form.namePlaceholder)}" autocomplete="name" required><small class="field-error" data-error-for="name"></small></div>
                 <div class="field"><label for="email"><span class="desktop-copy">联系方式</span><span class="mobile-copy">联系方式</span></label><input id="email" name="email" type="text" placeholder="${esc(C.contact.form.emailPlaceholder)}" autocomplete="email" required><small class="field-error" data-error-for="email"></small></div>
                 <div class="field"><label for="type">${esc(C.contact.form.typeLabel)}</label><select id="type" name="type" required><option value="" disabled selected style="display:none">${esc(C.contact.form.typePlaceholder)}</option>${(C.contact.form.typeOptions||[]).map(o=>`<option>${esc(o)}</option>`).join('')}</select><small class="field-error" data-error-for="type"></small></div>
@@ -364,9 +364,7 @@ const C = window.SITE_CONTENT || {};
         setError('name'); setError('email'); setError('type'); setError('message');
         if(!String(values.name||'').trim()){ setError('name','请留下称呼，方便后续沟通。'); ok=false; }
         const contact = String(values.email||'').trim();
-        const isEmail = /^\S+@\S+\.\S+$/.test(contact);
-        const isPhone = /^1[3-9]\d{9}$/.test(contact.replace(/[\s-]/g,''));
-        if(!isEmail && !isPhone){ setError('email','请输入有效邮箱或手机号，便于接收方案反馈。'); ok=false; }
+        if(!contact || contact.length < 2){ setError('email','请留下联系方式，方便我们联系您。'); ok=false; }
         if(!String(values.type||'').trim()){ setError('type','请选择项目类型。'); ok=false; }
         if(String(values.message||'').trim().length < 8){ setError('message','请简单描述项目需求，至少 8 个字。'); ok=false; }
         return { ok, values };
