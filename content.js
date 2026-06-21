@@ -238,7 +238,7 @@ window.SITE_CONTENT = {
       "nameLabel": "称呼",
       "namePlaceholder": "例如：x先生 / x女士",
       "emailLabel": "邮箱",
-      "emailPlaceholder": "与您联系的邮箱地址",
+      "emailPlaceholder": "与您联系的邮箱地址或者其他联系方式",
       "typeLabel": "需求类型",
       "typePlaceholder": "装修风格类型",
       "typeOptions": [
