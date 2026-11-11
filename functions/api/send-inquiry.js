@@ -3,7 +3,7 @@ const ENDPOINT = "https://dm.aliyuncs.com/";
 
 function corsHeaders(req) {
   return {
-    "Access-Control-Allow-Origin": req.headers.get("Origin") || "https://zhuye.huangqidong.cn",
+    "Access-Control-Allow-Origin": req.headers.get("Origin") || "https://biaoliruyi.cn",
     "Access-Control-Allow-Methods": "POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };

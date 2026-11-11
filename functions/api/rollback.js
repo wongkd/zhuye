@@ -1,5 +1,5 @@
 const WORKER_ENDPOINT = "https://zhuye-portfolio-cms.563838884.workers.dev/api/rollback";
-const ALLOWED_ORIGIN = "https://zhuye.huangqidong.cn";
+const ALLOWED_ORIGIN = "https://biaoliruyi.cn";
 
 function corsHeaders(request) {
   const origin = request.headers.get("Origin") || ALLOWED_ORIGIN;
