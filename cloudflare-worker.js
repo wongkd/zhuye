@@ -357,7 +357,7 @@ function json(data, status = 200, env, origin = "") {
 
 function corsResponse(body, status = 200, env, contentType = "text/plain; charset=utf-8", requestOrigin = "") {
   const allowedOrigins = [env?.ALLOWED_ORIGIN, env?.ALLOWED_ORIGIN_DEV].filter(Boolean);
-  let origin = env?.ALLOWED_ORIGIN || "https://zhuye.huangqidong.cn";
+  let origin = env?.ALLOWED_ORIGIN || "https://biaoliruyi.cn";
   if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
     origin = requestOrigin;
   }
